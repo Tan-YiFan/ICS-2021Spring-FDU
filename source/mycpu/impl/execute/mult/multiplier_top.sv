@@ -1,4 +1,4 @@
-
+`include "mycpu/interface.svh"
 module multiplier_top 
     import common::*;(
     input logic clk, resetn,

@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module hazard 
     import common::*;(
     hazard_intf.hazard self

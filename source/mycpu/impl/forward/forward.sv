@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module forward
     import common::*; 
     import forward_pkg::*;(

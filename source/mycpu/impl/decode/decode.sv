@@ -1,5 +1,4 @@
-`include "interface.svh"
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module decode
     import common::*; 
     import decode_pkg::*;
@@ -12,7 +11,7 @@ module decode
     forward_intf.decode forward,
     hazard_intf.decode hazard
 );
-    decode_data_t dataD;
+    decode_data_t dataD /* verilator split_var */;
 
     word_t raw_instr;
     assign raw_instr = dreg.dataF.raw_instr;

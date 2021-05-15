@@ -1,6 +1,10 @@
 //  Package: fetch_pkg
 //
-`include "mycpu/pkg.svh"
+`ifndef __FETCH_PKG_SV
+`define __FETCH_PKG_SV
+
+
+`include "common.sv"
 package fetch_pkg;
     import common::*;
     //  Group: Typedefs
@@ -15,3 +19,7 @@ package fetch_pkg;
 
     
 endpackage: fetch_pkg
+
+
+
+`endif

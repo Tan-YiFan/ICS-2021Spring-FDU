@@ -1,9 +1,9 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module memory
     import common::*;
     import memory_pkg::*; (
     output mem_read_req mread,
-    output mem_write_req mwrite,
+    output mem_write_req mwrite/* verilator split_var */,
     input word_t rd,
     mreg_intf.memory mreg,
     wreg_intf.memory wreg,

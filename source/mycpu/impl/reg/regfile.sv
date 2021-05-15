@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module regfile 
     import common::*;(
     input logic clk,

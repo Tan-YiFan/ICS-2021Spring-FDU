@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module execute 
     import common::*;
     import execute_pkg::*;
@@ -53,7 +53,7 @@ module execute
         .hi,
         .lo
     );
-    execute_data_t dataE;
+    execute_data_t dataE /* verilator split_var */;
     assign dataE.instr = ereg.dataD.instr;
     assign dataE.exception_instr = ereg.dataD.exception_instr;
     assign dataE.exception_ri = ereg.dataD.instr.exception_ri;

@@ -1,4 +1,4 @@
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module hilo 
     import common::*;(
     input logic clk, 

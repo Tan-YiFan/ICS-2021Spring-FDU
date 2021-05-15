@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module pcselect
     import common::*; (
     pcselect_intf.pcselect self,

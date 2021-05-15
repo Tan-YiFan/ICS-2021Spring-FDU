@@ -1,6 +1,11 @@
 //  Package: writeback_pkg
 //
-`include "mycpu/pkg.svh"
+`ifndef __WRITEBACK_PKG_SV
+`define __WRITEBACK_PKG_SV
+
+
+`include "common.sv"
+`include "decode_pkg.sv"
 package writeback_pkg;
     import common::*;
     import decode_pkg::*;
@@ -18,3 +23,7 @@ package writeback_pkg;
 
     
 endpackage: writeback_pkg
+
+
+
+`endif

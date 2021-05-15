@@ -1,4 +1,4 @@
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module alu 
     import common::*;(
     input word_t a, b,

@@ -1,7 +1,12 @@
 `ifndef __INTERFACE_SVH
 `define __INTERFACE_SVH
 `include "common.sv"
-`include "mycpu/pkg.svh"
+`include "decode_pkg.sv"
+`include "execute_pkg.sv"
+`include "fetch_pkg.sv"
+`include "forward_pkg.sv"
+`include "memory_pkg.sv"
+`include "writeback_pkg.sv"
 import common::*;
 interface pcselect_intf();
     logic exception_valid, is_eret, branch_taken, is_jr,
@@ -75,10 +80,12 @@ interface forward_intf();
     import execute_pkg::*;
     import memory_pkg::*;
     import writeback_pkg::*;
+    /* verilator lint_off UNOPTFLAT */
     decode_data_t dataD;
     execute_data_t dataE;
     memory_data_t dataM;
     writeback_data_t dataW;
+    /* verilator lint_on UNOPTFLAT */
 
     modport forward(output forwardAD, forwardBD, forwardAE, forwardBE,
                  input dataD, dataE, dataM, dataW);

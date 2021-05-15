@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module pipereg
     import common::*; #(
     parameter type T = logic,

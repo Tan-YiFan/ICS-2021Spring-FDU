@@ -1,7 +1,13 @@
 `include "common.svh"
-`include "common.sv"
+`include "mycpu/interface.svh"
 
-module MyCore (
+module MyCore 
+    import common::*;
+    import fetch_pkg::*;
+    import decode_pkg::*;
+    import execute_pkg::*;
+    import memory_pkg::*;
+    import writeback_pkg::*;(
     input logic clk, resetn,
 
     output ibus_req_t  ireq,
@@ -39,7 +45,7 @@ module MyCore (
     assign dreq.strobe = {4{mwrite.valid}};
     assign dreq.addr = mwrite.valid ? mwrite.addr : mread.addr;
     pcselect_intf pcselect_intf();
-    freg_intf freg_intf(.pc);
+    freg_intf freg_intf(.pc(ireq.addr));
     dreg_intf dreg_intf();
     ereg_intf ereg_intf();
     mreg_intf mreg_intf();

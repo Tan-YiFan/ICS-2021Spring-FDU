@@ -1,4 +1,4 @@
-`include "interface.svh"
+`include "mycpu/interface.svh"
 module writeback
     import common::*;
     import writeback_pkg::*;

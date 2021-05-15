@@ -1,5 +1,8 @@
 //  Package: execute_pkg
 //
+`ifndef __EXECUTE_PKG_SV
+`define __EXECUTE_PKG_SV
+
 `include "common.sv"
 `include "decode_pkg.sv"
 package execute_pkg;
@@ -26,3 +29,6 @@ package execute_pkg;
     
 endpackage: execute_pkg
 
+
+
+`endif

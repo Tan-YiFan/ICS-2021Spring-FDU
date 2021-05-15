@@ -1,6 +1,11 @@
 //  Package: memory_pkg
 //
-`include "mycpu/pkg.svh"
+`ifndef __MEMORY_PKG_SV
+`define __MEMORY_PKG_SV
+
+
+`include "common.sv"
+`include "decode_pkg.sv"
 package memory_pkg;
     import common::*;
     import decode_pkg::*;
@@ -20,3 +25,7 @@ package memory_pkg;
 
     
 endpackage: memory_pkg
+
+
+
+`endif

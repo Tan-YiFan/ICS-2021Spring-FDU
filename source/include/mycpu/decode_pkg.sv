@@ -1,5 +1,9 @@
 //  Package: decode_pkg
 //
+`ifndef __DECODE_PKG_SV
+`define __DECODE_PKG_SV
+
+
 `include "common.sv"
 package decode_pkg;
     import common::*;
@@ -147,3 +151,8 @@ package decode_pkg;
     
     
 endpackage: decode_pkg
+
+
+
+
+`endif

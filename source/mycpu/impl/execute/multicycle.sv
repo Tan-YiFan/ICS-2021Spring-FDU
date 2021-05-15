@@ -1,4 +1,4 @@
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module multicycle
     import common::*; 
     import execute_pkg::*;(

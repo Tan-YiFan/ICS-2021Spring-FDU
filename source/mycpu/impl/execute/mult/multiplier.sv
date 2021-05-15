@@ -1,3 +1,4 @@
+`include "mycpu/interface.svh"
 module multiplier (
         input logic clk, resetn, valid,
         input i32 a, b,

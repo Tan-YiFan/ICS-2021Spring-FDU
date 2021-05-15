@@ -1,4 +1,4 @@
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module writedata 
     import common::*;(
     input logic[1:0] addr,

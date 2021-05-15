@@ -1,5 +1,4 @@
-`include "interface.svh"
-`include "mycpu/pkg.svh"
+`include "mycpu/interface.svh"
 module decoder 
     import common::*;
     import decode_pkg::*;(
@@ -413,7 +412,7 @@ module decoder
     always_comb begin : srca
         instr.srca = rs;
         if (ctl.alufunc == ALU_PASSB) begin
-            instr.srca = 7'b0;
+            instr.srca = '0;
         end
         if (ctl.is_bp || ctl.is_sys || exception_ri) begin
             instr.srca = '0;
@@ -423,7 +422,7 @@ module decoder
     always_comb begin : srcb
         instr.srcb = ctl.alusrc == REGB ? rt : '0;
         if (ctl.alufunc == ALU_PASSA) begin
-            instr.srcb = 7'b0;
+            instr.srcb = '0;
         end
         if (ctl.memwrite | ctl.memread) begin
             instr.srcb = rt;

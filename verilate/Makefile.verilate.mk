@@ -21,11 +21,11 @@ SV_INCLUDES := \
 	$(addprefix -y , $(SV_SOURCE_FOLDERS))
 
 SV_WARNINGS = \
-	-Wall \
 	-Wno-IMPORTSTAR \
 	-Wno-MODDUP \
 	-Wno-PINMISSING \
-	-Wno-UNUSED
+	-Wno-UNUSED \
+	-Wno-DECLFILENAME
 	# add warnings that you wanna ignore.
 
 SV_FLAGS = \

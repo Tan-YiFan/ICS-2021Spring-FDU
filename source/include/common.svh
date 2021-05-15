@@ -75,7 +75,7 @@ typedef i32 addr_t;
 typedef i32 word_t;
 
 // number of bytes transferred in one memory r/w
-typedef enum i3 {
+typedef enum i2 {
     MSIZE1,
     MSIZE2,
     MSIZE4
