@@ -4,7 +4,8 @@ module divider_top
     input logic clk, resetn,
     input word_t a, b,
     input logic is_signed,
-    output word_t hi, lo
+    output word_t hi, lo,
+    input logic valid
 );
 
     dword_t out;
@@ -28,4 +29,5 @@ module divider_top
     assign lo = (is_signed & (a[31] ^ b[31])) ? -out[31:0] : out[31:0];
     assign hi = (is_signed & (a[31] ^ out[63])) ? -out[63:32] : out[63:32];
     
+    divider divider_inst(.a(a_u), .b(b_u), .c(out), .clk, .resetn, .valid);
 endmodule

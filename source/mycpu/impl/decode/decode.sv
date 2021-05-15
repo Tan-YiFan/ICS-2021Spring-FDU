@@ -9,7 +9,8 @@ module decode
     ereg_intf.decode ereg,
     regfile_intf.decode regfile,
     forward_intf.decode forward,
-    hazard_intf.decode hazard
+    hazard_intf.decode hazard,
+    hilo_intf.decode hilo
 );
     decode_data_t dataD /* verilator split_var */;
 
@@ -44,6 +45,12 @@ module decode
             end
             default: begin
                 rd1 = regfile.src1;
+                if (instr.op == MFHI) begin
+                    rd1 = hilo.hi;
+                end
+                if (instr.op == MFLO) begin
+                    rd1 = hilo.lo;
+                end
             end
         endcase
     end : forwardAD

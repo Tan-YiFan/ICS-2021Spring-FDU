@@ -14,6 +14,7 @@ module MyCore
     input  ibus_resp_t iresp,
     output dbus_req_t  dreq,
     input  dbus_resp_t dresp
+    /* verilator tracing_on */
 );
     /**
      * TODO (Lab1) your code here :)
@@ -31,19 +32,29 @@ module MyCore
     assign ireq = '0;
     assign dreq = '0;
     `UNUSED_OK({iresp, dresp}); */
-    assign ireq = '0;
+    /* assign ireq = '0;
     assign dreq = '0;
-    `UNUSED_OK({iresp, dresp});
-    word_t wb_pc;
+    `UNUSED_OK({iresp, dresp}); */
+    word_t wb_pc/* verilator public_flat_rd */;
     mem_read_req mread;
     mem_write_req mwrite;
     creg_write_req rfwrite;
+    creg_addr_t wb_id/* verilator public_flat_rd */;
+    assign wb_id = rfwrite.id;
+    word_t wb_value/* verilator public_flat_rd */;
+    assign wb_value = rfwrite.data;
+    logic wb_en/* verilator public_flat_rd */;
+    assign wb_en = rfwrite.valid;
     assign ireq.valid = 1'b1;
     assign dreq.valid = mread.valid | mwrite.valid;
     assign dreq.size = msize_t'(mwrite.valid ? mwrite.size : mread.size);
     assign dreq.data = mwrite.data;
-    assign dreq.strobe = {4{mwrite.valid}};
+    assign dreq.strobe = mwrite.strobe;
     assign dreq.addr = mwrite.valid ? mwrite.addr : mread.addr;
+
+    logic i_data_ok, d_data_ok;
+    assign i_data_ok = iresp.data_ok | ~ireq.valid;
+    assign d_data_ok = dresp.data_ok | ~dreq.valid;
     pcselect_intf pcselect_intf();
     freg_intf freg_intf(.pc(ireq.addr));
     dreg_intf dreg_intf();
@@ -54,7 +65,7 @@ module MyCore
     hilo_intf hilo_intf();
     // cp0_intf cp0_intf();
     forward_intf forward_intf();
-    hazard_intf hazard_intf(.i_data_ok(iresp.data_ok), .d_data_ok(dresp.data_ok));
+    hazard_intf hazard_intf(.i_data_ok, .d_data_ok);
     // exception_intf exception_intf(.ext_int);
 
     // instances
@@ -75,7 +86,8 @@ module MyCore
         .ereg(ereg_intf.decode),
         .forward(forward_intf.decode),
         .hazard(hazard_intf.decode),
-        .regfile(regfile_intf.decode)
+        .regfile(regfile_intf.decode),
+        .hilo(hilo_intf.decode)
     );
     execute execute(
         .clk, .resetn,

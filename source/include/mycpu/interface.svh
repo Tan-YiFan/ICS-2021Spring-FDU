@@ -128,12 +128,13 @@ interface hazard_intf(input logic i_data_ok, d_data_ok);
     execute_data_t dataE;
     memory_data_t dataM;
     writeback_data_t dataW;
+    logic mult_ok;
 
     modport hazard(output stallF, stallD, stallE, stallM, 
                         flushD, flushE, flushM, flushW,
-                 input dataD, dataE, dataM, dataW, i_data_ok, d_data_ok);
+                 input dataD, dataE, dataM, dataW, i_data_ok, d_data_ok, mult_ok);
     modport decode(output dataD, input stallD, flushD);
-    modport execute(output dataE);
+    modport execute(output dataE, mult_ok);
     modport memory(output dataM);
     modport writeback(output dataW);
 endinterface

@@ -21,7 +21,8 @@ module memory
         .addr(mwrite.addr[1:0]), 
         ._wd(mreg.dataE.writedata), 
         .mem_type(mreg.dataE.instr.ctl.mem_type), 
-        .wd(mwrite.data)
+        .wd(mwrite.data),
+        .strobe(mwrite.strobe)
     );
     assign mwrite.size = mreg.dataE.instr.ctl.mem_size;
 

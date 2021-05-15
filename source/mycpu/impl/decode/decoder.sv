@@ -173,7 +173,7 @@ module decoder
                     F_MFLO: begin
                         op = MFLO;
                         ctl.regwrite = 1'b1;
-                        ctl.alufunc = ALU_PASSB;
+                        ctl.alufunc = ALU_PASSA;
                     end
                     F_MTHI: begin
                         op = MTHI;

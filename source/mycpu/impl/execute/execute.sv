@@ -51,7 +51,8 @@ module execute
         .flushE(1'b0),
         .multicycle_type(ereg.dataD.instr.ctl.multicycle_type),
         .hi,
-        .lo
+        .lo,
+        .ok(hazard.mult_ok)
     );
     execute_data_t dataE /* verilator split_var */;
     assign dataE.instr = ereg.dataD.instr;

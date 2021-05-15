@@ -19,9 +19,9 @@ module multiplier (
                 end
         end
         logic [3:0][63:0] q;
-        assign q[0] = {p[0]};
-        assign q[1] = {p[1], 16'b0};
-        assign q[2] = {p[2], 16'b0};
+        assign q[0] = {32'b0, p[0]};
+        assign q[1] = {16'b0, p[1], 16'b0};
+        assign q[2] = {16'b0, p[2], 16'b0};
         assign q[3] = {p[3], 32'b0};
         assign c = q[0] + q[1] + q[2] + q[3];
 

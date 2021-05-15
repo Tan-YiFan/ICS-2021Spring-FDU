@@ -2,7 +2,6 @@
 //
 `ifndef __COMMON_SV
 `define __COMMON_SV
-
 package common;
     //  Group: Parameters
     
@@ -54,6 +53,7 @@ package common;
         vaddr_t addr;
         word_t data;
         logic[1:0] size;
+        logic[3:0] strobe;
     } mem_write_req;
     typedef struct packed {
         logic valid;

@@ -15,8 +15,8 @@ module VTop (
     ibus_resp_t iresp;
     dbus_req_t  dreq;
     dbus_resp_t dresp;
-    cbus_req_t  icreq,  dcreq;
-    cbus_resp_t icresp, dcresp;
+    cbus_req_t  icreq,  dcreq, treq;
+    cbus_resp_t icresp, dcresp, tresp;
 
     MyCore core(.*);
     IBusToCBus icvt(.*);
@@ -28,12 +28,13 @@ module VTop (
     CBusArbiter mux(
         .ireqs({icreq, dcreq}),
         .iresps({icresp, dcresp}),
+        .oreq(treq), .oresp(tresp),
         .*
     );
 
     /**
      * TODO (optional) add address translation for oreq.addr :)
      */
-
+    DirectTrans dt(.*);
     `UNUSED_OK({ext_int});
 endmodule
