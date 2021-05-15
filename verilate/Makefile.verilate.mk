@@ -22,7 +22,10 @@ SV_INCLUDES := \
 
 SV_WARNINGS = \
 	-Wall \
-	-Wno-IMPORTSTAR
+	-Wno-IMPORTSTAR \
+	-Wno-MODDUP \
+	-Wno-PINMISSING \
+	-Wno-UNUSED
 	# add warnings that you wanna ignore.
 
 SV_FLAGS = \

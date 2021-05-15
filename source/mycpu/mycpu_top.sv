@@ -4,7 +4,7 @@
 /**
  * TODO (Lab2) comment out the following line :)
  */
-`define FIXED_LATENCY
+// `define FIXED_LATENCY
 
 module mycpu_top (
 `ifdef FIXED_LATENCY
