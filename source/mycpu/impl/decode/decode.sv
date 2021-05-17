@@ -110,12 +110,14 @@ module decode
     assign dataD.exception_ri = dataD.instr.exception_ri;
     assign dataD.cp0_status = cp0.cp0_status;
     assign dataD.cp0_cause = cp0.cp0_cause;
+    assign dataD.hi = hilo.hi;
+    assign dataD.lo = hilo.lo;
 
     assign ereg.dataD_new = dataD;
 
     assign pcselect.pcjump = {dreg.dataF.pcplus4[31:28], raw_instr[25:0], 2'b0};
     assign pcselect.pcjr = rd1;
-    assign pcselect.pcbranch = dreg.dataF.pcplus4 + {instr.imm[29:0], 2'b00};
+    assign pcselect.pcbranch = dreg.dataF.pcplus4 + {{14{raw_instr[15]}}, raw_instr[15:0], 2'b00};
     assign pcselect.branch_taken = branch_taken;
     assign pcselect.is_jr = instr.ctl.jr;
     assign pcselect.is_jump = instr.ctl.jump;

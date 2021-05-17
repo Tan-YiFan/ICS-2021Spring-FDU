@@ -9,6 +9,7 @@
 `include "writeback_pkg.sv"
 `include "cp0_pkg.sv"
 `include "exception_pkg.sv"
+`include "translation_pkg.sv"
 import common::*;
 interface pcselect_intf();
     	logic exception_valid, is_eret, branch_taken, is_jr,
@@ -150,8 +151,9 @@ interface cp0_intf();
 	creg_write_req write;
 	cp0_status_t cp0_status;
 	cp0_cause_t cp0_cause;
+    logic [2:0]sel;
 	modport cp0(
-	    input ra, write,
+	    input ra, write, sel,
 	    output rd, cp0_status, cp0_cause
 	);
 	modport writeback(
@@ -159,7 +161,7 @@ interface cp0_intf();
 	);
 	modport decode(
 	    input rd, cp0_status, cp0_cause,
-	    output ra
+	    output ra, sel
 	);
 endinterface
 

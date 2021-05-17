@@ -59,9 +59,21 @@ module execute
     assign dataE.exception_instr = ereg.dataD.exception_instr;
     assign dataE.exception_ri = ereg.dataD.instr.exception_ri;
     assign dataE.exception_of = exception_of;
-    assign dataE.aluout = (ereg.dataD.instr.ctl.is_link) ? (ereg.dataD.pcplus4 + 4) : aluout;
+    assign dataE.aluout = (ereg.dataD.instr.ctl.is_link) ? (ereg.dataD.pcplus4 + 4) : (
+        ereg.dataD.instr.ctl.is_mul ? lo : aluout
+    );
     assign dataE.writereg = ereg.dataD.instr.dest;
     assign dataE.writedata = writedata;
+    always_comb begin
+        unique case(ereg.dataD.instr.ctl.multicycle_type)
+            M_MADD: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} + {hi, lo};
+            M_MSUB: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} - {hi, lo};
+            default: begin
+                {dataE.hi, dataE.lo} = {hi, lo};
+            end
+        endcase
+    end
+    
     assign dataE.hi = hi;
     assign dataE.lo = lo;
     assign dataE.pcplus4 = ereg.dataD.pcplus4;

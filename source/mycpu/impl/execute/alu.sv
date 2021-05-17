@@ -9,6 +9,8 @@ module alu
     logic[4:0] shamt;
     assign shamt = a[4:0];
 
+    word_t clo_out;
+    count_clo count_clo_inst(.in(alufunc == ALU_CLZ ? ~a : a), .out(clo_out));
     always_comb begin
         exception_of = 0;
         
@@ -62,6 +64,9 @@ module alu
             end
             ALU_PASSB: begin
                 c = b;
+            end
+            ALU_CLO, ALU_CLZ: begin
+                c = clo_out;
             end
             default: begin
                 c = '0;

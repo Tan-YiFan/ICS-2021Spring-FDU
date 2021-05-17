@@ -21,12 +21,13 @@ package common;
         ALU_ADDU, ALU_AND, ALU_OR, ALU_ADD, ALU_SLL, 
         ALU_SRL, ALU_SRA, ALU_SUB, ALU_SLT, ALU_NOR, 
         ALU_XOR, ALU_SUBU, ALU_SLTU, ALU_PASSA, ALU_LUI, 
-        ALU_PASSB, ALU_MOVN, ALU_MOVZ
+        ALU_PASSB, ALU_MOVN, ALU_MOVZ, ALU_CLO, ALU_CLZ
     } alufunc_t;
     typedef enum logic[1:0] { REGB, IMM} alusrcb_t;
     typedef enum logic[2:0] { T_BEQ, T_BNE, T_BGEZ, T_BLTZ, T_BGTZ, T_BLEZ } branch_t;
-    typedef enum logic [1:0] {
-        M_MULT, M_MULTU, M_DIV, M_DIVU
+    typedef enum logic [2:0] {
+        M_MULT, M_MULTU, M_DIV, M_DIVU,
+        M_MADD, M_MSUB
     } multicycle_t;
     typedef enum logic [2:0] {
         MEM_LB, MEM_LBU, 

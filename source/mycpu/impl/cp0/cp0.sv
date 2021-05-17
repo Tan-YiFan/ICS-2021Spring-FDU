@@ -78,19 +78,34 @@ module cp0
                 if (~resetn) begin
                         cp0 <= '0;
                         cp0.status.BEV <= '1;
+                        cp0.prid <= 32'h4220;
+                        cp0.config_ <= 32'h80000080;
+                        cp0.config_1 <= 32'b00_11111_000_101_111_000_101_011_0000000;
                 end else begin
                         cp0 <= cp0_nxt;
                 end
         end
         always_comb begin
+                if (self.sel != '0) begin
+                        self.rd = cp0.config_1;
+                end else
                 unique case(self.ra)
+                        5'd0:   self.rd = cp0.index;
+                        5'd1:   self.rd = cp0.random;
+                        5'd2:   self.rd = cp0.entrylo0;
+                        5'd3:   self.rd = cp0.entrylo1;
+                        5'd4:   self.rd = cp0.context_;
+                        5'd6:   self.rd = cp0.wired;
                         5'd8:   self.rd = cp0.badvaddr;
                         5'd9:   self.rd = cp0.count;
+                        5'd10:  self.rd = cp0.entryhi;
+                        5'd11:  self.rd = cp0.compare;
                         5'd12:  self.rd = cp0.status;
                         5'd13:  self.rd = cp0.cause;
                         5'd14:  self.rd = cp0.epc;
+                        5'd15:  self.rd = cp0.prid;
                         5'd16:  self.rd = cp0.config_;
-                        default:self.rd = '0;
+                        default: self.rd = '0;
                 endcase
         end
         
