@@ -5,9 +5,10 @@
 
 
 `include "common.sv"
+`include "cp0_pkg.sv"
 package decode_pkg;
     import common::*;
-
+    import cp0_pkg::*;
     //  Group: Typedefs
     typedef struct packed {
         alufunc_t alufunc;
@@ -58,6 +59,9 @@ package decode_pkg;
         word_t pcplus4;
         word_t rd1, rd2;
         logic exception_instr;
+        logic exception_ri;
+        cp0_cause_t cp0_cause;
+        cp0_status_t cp0_status;
     } decode_data_t;
 
     //  Group: Parameters

@@ -13,7 +13,8 @@ module MyCore
     output ibus_req_t  ireq,
     input  ibus_resp_t iresp,
     output dbus_req_t  dreq,
-    input  dbus_resp_t dresp
+    input  dbus_resp_t dresp,
+    input logic[5:0] ext_int
     /* verilator tracing_on */
 );
     /**
@@ -45,7 +46,7 @@ module MyCore
     assign wb_value = rfwrite.data;
     logic wb_en/* verilator public_flat_rd */;
     assign wb_en = rfwrite.valid;
-    assign ireq.valid = 1'b1;
+    assign ireq.valid = ~fetch.dataF.exception_instr;
     assign dreq.valid = mread.valid | mwrite.valid;
     assign dreq.size = msize_t'(mwrite.valid ? mwrite.size : mread.size);
     assign dreq.data = mwrite.data;
@@ -66,6 +67,8 @@ module MyCore
     // cp0_intf cp0_intf();
     forward_intf forward_intf();
     hazard_intf hazard_intf(.i_data_ok, .d_data_ok);
+    exception_intf exception_intf();
+    cp0_intf cp0_intf();
     // exception_intf exception_intf(.ext_int);
 
     // instances
@@ -87,7 +90,8 @@ module MyCore
         .forward(forward_intf.decode),
         .hazard(hazard_intf.decode),
         .regfile(regfile_intf.decode),
-        .hilo(hilo_intf.decode)
+        .hilo(hilo_intf.decode),
+        .cp0(cp0_intf.decode)
     );
     execute execute(
         .clk, .resetn,
@@ -101,7 +105,9 @@ module MyCore
         .mreg(mreg_intf.memory),
         .wreg(wreg_intf.memory),
         .forward(forward_intf.memory),
-        .hazard(hazard_intf.memory)
+        .hazard(hazard_intf.memory),
+        .exception(exception_intf.memory),
+        .ext_int
     );
     writeback writeback(
         .wreg(wreg_intf.writeback),
@@ -109,6 +115,7 @@ module MyCore
         .hilo(hilo_intf.writeback),
         .hazard(hazard_intf.writeback),
         .forward(forward_intf.writeback),
+        .cp0(cp0_intf.writeback),
         .pc(wb_pc)
     );
     hazard hazard (
@@ -125,6 +132,18 @@ module MyCore
     hilo hilo (
         .clk,
         .self(hilo_intf.hilo)
+    );
+
+    exception exception(
+        .self(exception_intf.exception),
+        .hazard(hazard_intf.exception)
+    );
+
+    cp0 cp0(
+        .clk, .resetn,
+        .self(cp0_intf.cp0),
+        .exception(exception_intf.cp0),
+        .pcselect(pcselect_intf.cp0)
     );
     pipereg #(.T(word_t), .INIT(PCINIT)) freg(
         .clk, .resetn,

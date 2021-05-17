@@ -66,6 +66,8 @@ module execute
     assign dataE.lo = lo;
     assign dataE.pcplus4 = ereg.dataD.pcplus4;
     assign dataE.in_delay_slot = ereg.dataD.in_delay_slot;
+    assign dataE.cp0_cause = ereg.dataD.cp0_cause;
+    assign dataE.cp0_status = ereg.dataD.cp0_status;
     
     assign mreg.dataE_new = dataE;
 

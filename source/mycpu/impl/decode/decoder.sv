@@ -440,8 +440,8 @@ module decoder
         if (ctl.jump | ctl.branch) begin
             instr.dest = 5'b11111;
         end
-        // if (ctl.cp0write) begin
-        //     instr.dest = rd;
-        // end
+        if (ctl.cp0write) begin
+            instr.dest = rd;
+        end
     end
 endmodule

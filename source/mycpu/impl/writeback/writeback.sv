@@ -8,6 +8,7 @@ module writeback
     hilo_intf.writeback hilo,
     hazard_intf.writeback hazard,
     forward_intf.writeback forward,
+    cp0_intf.writeback cp0,
     // debug
     output word_t pc
 );
@@ -42,5 +43,10 @@ module writeback
     assign forward.dataW = dataW;
 
     assign hazard.dataW = dataW;
+    assign cp0.write = '{
+        valid: wreg.dataM.instr.ctl.cp0write,
+        id: wreg.dataM.writereg,
+        data: result
+    };
 
 endmodule

@@ -11,6 +11,7 @@ package fetch_pkg;
     typedef struct packed {
         word_t pcplus4;
         word_t raw_instr;
+        logic exception_instr;
     } fetch_data_t;
     
 

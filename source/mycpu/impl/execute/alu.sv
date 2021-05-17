@@ -18,7 +18,7 @@ module alu
             end
             ALU_ADD: begin
                 c = a + b;
-                exception_of = (a[31] == b[31]) && (a[31] != b[31]);
+                exception_of = (a[31] == b[31]) && (a[31] != c[31]);
             end
             ALU_OR: begin
                 c = a | b;

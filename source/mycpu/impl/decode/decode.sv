@@ -10,7 +10,8 @@ module decode
     regfile_intf.decode regfile,
     forward_intf.decode forward,
     hazard_intf.decode hazard,
-    hilo_intf.decode hilo
+    hilo_intf.decode hilo,
+    cp0_intf.decode cp0
 );
     decode_data_t dataD /* verilator split_var */;
 
@@ -50,6 +51,9 @@ module decode
                 end
                 if (instr.op == MFLO) begin
                     rd1 = hilo.lo;
+                end
+                if (instr.op == MFC0) begin
+                    rd1 = cp0.rd;
                 end
             end
         endcase
@@ -102,6 +106,10 @@ module decode
     assign dataD.pcplus4 = dreg.dataF.pcplus4;
     assign dataD.rd1 = rd1;
     assign dataD.rd2 = rd2;
+    assign dataD.exception_instr = dreg.dataF.exception_instr;
+    assign dataD.exception_ri = dataD.instr.exception_ri;
+    assign dataD.cp0_status = cp0.cp0_status;
+    assign dataD.cp0_cause = cp0.cp0_cause;
 
     assign ereg.dataD_new = dataD;
 
@@ -117,4 +125,5 @@ module decode
 
     assign forward.dataD = dataD;
     assign hazard.dataD = dataD;
+    assign cp0.ra = raw_instr[15:11];
 endmodule

@@ -18,5 +18,6 @@ module fetch
     assign pc = freg.pc;
     assign dreg.dataF_new = dataF;
     assign pcselect.pcplus4 = pcplus4F;
+    assign dataF.exception_instr = |pc[1:0];
 
 endmodule

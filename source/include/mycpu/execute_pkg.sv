@@ -5,9 +5,11 @@
 
 `include "common.sv"
 `include "decode_pkg.sv"
+`include "cp0_pkg.sv"
 package execute_pkg;
     import common::*;
     import decode_pkg::*;
+    import cp0_pkg::*;
     //  Group: Parameters
     
 
@@ -21,8 +23,8 @@ package execute_pkg;
         word_t hi, lo;
         word_t pcplus4;
         logic in_delay_slot;
-        // cp0_cause_t cp0_cause;
-        // cp0_status_t cp0_status;
+        cp0_cause_t cp0_cause;
+        cp0_status_t cp0_status;
     } execute_data_t;
     
 

@@ -38,13 +38,14 @@ module hazard
     assign i_data_ok = self.i_data_ok;
     assign d_data_ok = self.d_data_ok;
 
+    wire flush_ex = self.exception_valid | self.is_eret;
     assign self.stallF = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall;
     assign self.stallD = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall;
     assign self.stallE = (~d_data_ok) | ~self.mult_ok;
-    assign self.stallM = ~d_data_ok;
+    assign self.stallM = ~d_data_ok | flush_ex;
 
-    assign self.flushD = 1'b0;
-    assign self.flushE = (lwstall | branchstall | ~i_data_ok | multdiv_stallM | multdiv_stallW) & self.mult_ok;
-    assign self.flushM = ~self.mult_ok | multdiv_stallW | multdiv_stallM;
-    assign self.flushW = ~d_data_ok;
+    assign self.flushD = flush_ex;
+    assign self.flushE = ((lwstall | branchstall | ~i_data_ok | multdiv_stallM | multdiv_stallW) & self.mult_ok) | flush_ex;
+    assign self.flushM = ~self.mult_ok | multdiv_stallW | multdiv_stallM | (flush_ex & i_data_ok);
+    assign self.flushW = ~d_data_ok | flush_ex;
 endmodule
