@@ -430,6 +430,18 @@ module decoder
 								op = ERET;
 								ctl.is_eret = 1'b1;
 							end
+							C_TLBP: begin
+								op = TLBP;
+								ctl.is_tlbp = 1'b1;
+							end
+							C_TLBR: begin
+								op = TLBR;
+								ctl.is_tlbr = 1'b1;
+							end
+							C_TLBWI: begin
+								op = TLBWI;
+								ctl.is_tlbwi = 1'b1;
+							end
 							default: begin
 								exception_ri = 1'b1;
 								op = RESERVED;

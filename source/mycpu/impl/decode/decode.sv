@@ -128,4 +128,8 @@ module decode
     assign forward.dataD = dataD;
     assign hazard.dataD = dataD;
     assign cp0.ra = raw_instr[15:11];
+
+    assign dataD.i_tlb_invalid = dreg.dataF.i_tlb_invalid;
+    assign dataD.i_tlb_modified = dreg.dataF.i_tlb_modified;
+    assign dataD.i_tlb_refill = dreg.dataF.i_tlb_refill;
 endmodule

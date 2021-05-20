@@ -19,7 +19,7 @@ typedef struct packed {
                                   // with special upper and lower bound 
 } cp0_random_t;
 
-parameter PABITS = 36;          // physical address bits
+parameter PABITS = 32;          // physical address bits
 typedef struct packed {
     logic [31:PABITS - 6] fill;     // always 0, R
     logic [PABITS-7:6] pfn;         // page frame number, R/W

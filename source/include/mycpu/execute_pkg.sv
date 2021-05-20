@@ -25,6 +25,9 @@ package execute_pkg;
         logic in_delay_slot;
         cp0_cause_t cp0_cause;
         cp0_status_t cp0_status;
+        logic i_tlb_invalid;
+        logic i_tlb_modified;
+        logic i_tlb_refill;
     } execute_data_t;
     
 

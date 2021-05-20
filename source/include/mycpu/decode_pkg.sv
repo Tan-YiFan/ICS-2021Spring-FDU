@@ -34,6 +34,9 @@ package decode_pkg;
         logic [1:0] mem_size;
         mem_t mem_type;
         logic is_mul;
+        logic is_tlbwi;
+        logic is_tlbr;
+        logic is_tlbp;
     } control_t;
     typedef enum logic [6: 0] { 
         ADDI, ADDIU, SLTI, SLTIU, ANDI, ORI, XORI, 
@@ -64,6 +67,9 @@ package decode_pkg;
         cp0_cause_t cp0_cause;
         cp0_status_t cp0_status;
         word_t hi, lo;
+        logic i_tlb_invalid;
+        logic i_tlb_modified;
+        logic i_tlb_refill;
     } decode_data_t;
 
     //  Group: Parameters

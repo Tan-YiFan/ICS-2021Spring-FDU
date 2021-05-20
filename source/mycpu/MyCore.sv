@@ -7,7 +7,8 @@ module MyCore
     import decode_pkg::*;
     import execute_pkg::*;
     import memory_pkg::*;
-    import writeback_pkg::*;(
+    import writeback_pkg::*;
+    import translation_pkg::*;(
     input logic clk, resetn,
 
     output ibus_req_t  ireq,
@@ -45,19 +46,27 @@ module MyCore
     word_t wb_value/* verilator public_flat_rd */;
     assign wb_value = rfwrite.data;
     logic wb_en/* verilator public_flat_rd */;
+    word_t pc;
     assign wb_en = rfwrite.valid;
-    assign ireq.valid = ~fetch.dataF.exception_instr;
-    assign dreq.valid = mread.valid | mwrite.valid;
-    assign dreq.size = msize_t'(mwrite.valid ? mwrite.size : mread.size);
-    assign dreq.data = mwrite.data;
-    assign dreq.strobe = mwrite.strobe;
-    assign dreq.addr = mwrite.valid ? mwrite.addr : mread.addr;
+
+    ibus_req_t ireq_virt;
+    dbus_req_t dreq_virt;
+    assign ireq_virt.valid = ~fetch.dataF.exception_instr;
+    assign ireq_virt.addr = pc;
+    assign dreq_virt.valid = mread.valid | mwrite.valid;
+    assign dreq_virt.size = msize_t'(mwrite.valid ? mwrite.size : mread.size);
+    assign dreq_virt.data = mwrite.data;
+    assign dreq_virt.strobe = mwrite.strobe;
+    assign dreq_virt.addr = mwrite.valid ? mwrite.addr : mread.addr;
 
     logic i_data_ok, d_data_ok;
     assign i_data_ok = iresp.data_ok | ~ireq.valid;
     assign d_data_ok = dresp.data_ok | ~dreq.valid;
+
+    tu_op_req_t tu_op_req;
+    tu_op_resp_t tu_op_resp;
     pcselect_intf pcselect_intf();
-    freg_intf freg_intf(.pc(ireq.addr));
+    freg_intf freg_intf(.pc);
     dreg_intf dreg_intf();
     ereg_intf ereg_intf();
     mreg_intf mreg_intf();
@@ -107,7 +116,9 @@ module MyCore
         .forward(forward_intf.memory),
         .hazard(hazard_intf.memory),
         .exception(exception_intf.memory),
-        .ext_int
+        .ext_int,
+        .is_tlbwi(tu_op_req.is_tlbwi),
+        .cp0(cp0_intf.memory)
     );
     writeback writeback(
         .wreg(wreg_intf.writeback),
@@ -143,7 +154,12 @@ module MyCore
         .clk, .resetn,
         .self(cp0_intf.cp0),
         .exception(exception_intf.cp0),
-        .pcselect(pcselect_intf.cp0)
+        .pcselect(pcselect_intf.cp0),
+        .entryhi(tu_op_req.entryhi),
+        .entrylo0(tu_op_req.entrylo0),
+        .entrylo1(tu_op_req.entrylo1),
+        .index(tu_op_req.index),
+        .tu_op_resp
     );
     pipereg #(.T(word_t), .INIT(PCINIT)) freg(
         .clk, .resetn,
@@ -183,5 +199,12 @@ module MyCore
         .out(wreg_intf.dataM),
         .flush(hazard_intf.flushW),
         .en(1'b1)
+    );
+
+    mmu mmu(
+        .clk, .resetn,
+        .tu_op_req, .tu_op_resp,
+        .ireq_virt, .dreq_virt,
+        .ireq, .dreq
     );
 endmodule

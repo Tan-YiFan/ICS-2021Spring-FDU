@@ -80,6 +80,9 @@ module execute
     assign dataE.in_delay_slot = ereg.dataD.in_delay_slot;
     assign dataE.cp0_cause = ereg.dataD.cp0_cause;
     assign dataE.cp0_status = ereg.dataD.cp0_status;
+    assign dataE.i_tlb_invalid = ereg.dataD.i_tlb_invalid;
+    assign dataE.i_tlb_modified = ereg.dataD.i_tlb_modified;
+    assign dataE.i_tlb_refill = ereg.dataD.i_tlb_refill;
     
     assign mreg.dataE_new = dataE;
 

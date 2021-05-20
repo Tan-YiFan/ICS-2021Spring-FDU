@@ -2,11 +2,16 @@
 module cp0 
         import common::*;
         import cp0_pkg::*;
-        import exception_pkg::*;(
+        import exception_pkg::*;
+        import translation_pkg::*;(
         input logic clk, resetn,
         cp0_intf.cp0 self,
         pcselect_intf.cp0 pcselect,
-        exception_intf.cp0 exception
+        exception_intf.cp0 exception,
+        output cp0_entryhi_t entryhi,
+        output cp0_entrylo_t entrylo0, entrylo1,
+        output cp0_index_t index,
+        input tu_op_resp_t tu_op_resp
 );
         cp0_regs_t cp0, cp0_nxt;
 
@@ -42,6 +47,16 @@ module cp0
                         endcase
                 end
                 
+                // tlb
+                if (self.is_tlbp) begin
+                        cp0_nxt.index = tu_op_resp.index;
+                end
+
+                if (self.is_tlbr) begin
+                        cp0_nxt.entryhi = tu_op_resp.entryhi;
+                        cp0_nxt.entrylo0 = tu_op_resp.entrylo0;
+                        cp0_nxt.entrylo1 = tu_op_resp.entrylo1;
+                end
                 if (exception_info.valid) begin
                         if (~cp0.status.EXL) begin
                                 if (exception_info.in_delay_slot) begin
@@ -128,5 +143,8 @@ module cp0
         assign pcselect.pc_eret = cp0.epc;
         assign pcselect.pcexception = exception_info.location;
         assign pcselect.is_eret = exception.is_eret;
-        
+        assign entryhi = cp0.entryhi;
+        assign entrylo0 = cp0.entrylo0;
+        assign entryhi = cp0.entryhi;
+        assign index = cp0.index;
 endmodule

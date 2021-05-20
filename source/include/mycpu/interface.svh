@@ -152,8 +152,9 @@ interface cp0_intf();
 	cp0_status_t cp0_status;
 	cp0_cause_t cp0_cause;
     logic [2:0]sel;
+    logic is_tlbp, is_tlbr;
 	modport cp0(
-	    input ra, write, sel,
+	    input ra, write, sel, is_tlbp, is_tlbr,
 	    output rd, cp0_status, cp0_cause
 	);
 	modport writeback(
@@ -163,6 +164,9 @@ interface cp0_intf();
 	    input rd, cp0_status, cp0_cause,
 	    output ra, sel
 	);
+    modport memory(
+        output is_tlbp, is_tlbr
+    );
 endinterface
 
 interface exception_intf();
@@ -178,21 +182,36 @@ interface exception_intf();
 	cp0_cause_t cp0_cause;
     	logic is_eret;
 	logic timer_interrupt;
+    logic i_tlb_invalid; // && req
+	logic i_tlb_modified; // && is store
+	logic d_tlb_invalid; // && req
+	logic d_tlb_modified; // && is store
+	logic i_tlb_refill;
+	logic d_tlb_refill;
+    logic is_store;
 	
 	modport memory(
 		input timer_interrupt,
 		output instr, ri, ov, sys, bp, store, load, interrupt_info, in_delay_slot,
-			pc, badvaddr, cp0_status, cp0_cause, is_eret
+			pc, badvaddr, cp0_status, cp0_cause, is_eret,
+            i_tlb_invalid, i_tlb_modified, i_tlb_refill, is_store
 	);
 	modport exception(
 		input instr, ri, ov, sys, bp, store, load, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
+            i_tlb_invalid, i_tlb_modified,
+            i_tlb_refill,
+            d_tlb_invalid, d_tlb_modified,
+            d_tlb_refill, is_store,
 		output exception_info
 	);
 	modport cp0(
 		input exception_info, is_eret,
 		output timer_interrupt
 	);
+    modport mmu(
+        output d_tlb_invalid, d_tlb_modified, d_tlb_refill
+    );
 
 endinterface
 `endif

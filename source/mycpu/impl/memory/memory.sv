@@ -10,7 +10,9 @@ module memory
 	forward_intf.memory forward,
 	hazard_intf.memory hazard,
 	exception_intf.memory exception,
-	input logic[5:0] ext_int
+	input logic[5:0] ext_int,
+	output logic is_tlbwi,
+	cp0_intf.memory cp0
 );
 	logic invalid_addr;
 	always_comb begin
@@ -69,4 +71,11 @@ module memory
 	assign exception.cp0_status = mreg.dataE.cp0_status;
 	assign exception.cp0_cause = mreg.dataE.cp0_cause;
 	assign exception.is_eret = mreg.dataE.instr.ctl.is_eret;
+	assign exception.is_store = mwrite.valid;
+	assign exception.i_tlb_invalid = mreg.dataE.i_tlb_invalid;
+	assign exception.i_tlb_modified = mreg.dataE.i_tlb_modified;
+	assign exception.i_tlb_refill = mreg.dataE.i_tlb_refill;
+
+	assign cp0.is_tlbp = mreg.dataE.instr.ctl.is_tlbp;
+	assign cp0.is_tlbr = mreg.dataE.instr.ctl.is_tlbr;
 endmodule

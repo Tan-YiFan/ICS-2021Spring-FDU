@@ -12,6 +12,9 @@ package fetch_pkg;
         word_t pcplus4;
         word_t raw_instr;
         logic exception_instr;
+        logic i_tlb_invalid;
+        logic i_tlb_modified;
+        logic i_tlb_refill;
     } fetch_data_t;
     
 

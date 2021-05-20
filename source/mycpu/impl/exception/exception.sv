@@ -13,10 +13,34 @@ module exception
                        & (~self.cp0_status.ERL);
         exc_code_t exccode;
         logic exception_valid;
+        logic tlb_refill;
         always_comb begin
-                exception_valid = '0;
+                exception_valid = '1;
                 exccode = '0;
-                if (interrupt_valid) begin
+                tlb_refill = '0;
+                priority case (1'b1)
+                        interrupt_valid : begin exccode = CODE_INT; tlb_refill = 1'b0;end
+                        self.instr : begin exccode = CODE_ADEL;tlb_refill = 1'b0;end
+                        self.i_tlb_invalid|self.i_tlb_modified|self.i_tlb_refill : begin exccode = CODE_TLBL;tlb_refill = self.i_tlb_refill;end
+                        // self.cpu: begin exccode = CODE_CPU;tlb_refill = 1'b0;end
+                        self.ri: begin exccode = CODE_RI;tlb_refill = 1'b0;end
+                        self.ov: begin exccode = CODE_OV;tlb_refill = 1'b0;end
+                        self.bp: begin exccode = CODE_BP;tlb_refill = 1'b0;end
+                        self.sys: begin exccode = CODE_SYS;tlb_refill = 1'b0;end
+                        // self.tr: begin exccode = CODE_TR;tlb_refill = 1'b0;end
+                        self.load: begin exccode = CODE_ADEL;tlb_refill = 1'b0;end
+                        self.store: begin exccode = CODE_ADES;tlb_refill = 1'b0;end
+                        self.d_tlb_invalid|self.d_tlb_refill: begin 
+                                exccode = self.is_store? CODE_TLBS : CODE_TLBL; tlb_refill = self.d_tlb_refill;
+                        end
+                        self.d_tlb_modified: begin exccode = CODE_MOD;tlb_refill = 1'b0;end
+                        default: begin
+                                exccode = '0;
+                                exception_valid = '0;
+                                tlb_refill = 1'b0;
+                        end
+                endcase
+                /* if (interrupt_valid) begin
                         exception_valid = 1'b1;
                         exccode = CODE_INT;
                 end else if (self.instr) begin
@@ -40,7 +64,7 @@ module exception
                 end else if (self.store) begin
                         exception_valid = 1'b1;
                         exccode = CODE_ADES;
-                end
+                end */
         end
         assign self.exception_info = '{
                 valid : exception_valid,
