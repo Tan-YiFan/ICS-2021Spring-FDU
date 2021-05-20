@@ -68,7 +68,7 @@ module exception
         end
         assign self.exception_info = '{
                 valid : exception_valid,
-                location: EXC_ENTRY,
+                location: tlb_refill ? REFILL_ENTRY : EXC_ENTRY,
                 pc: self.pc,
                 in_delay_slot: self.in_delay_slot,
                 code: exccode,

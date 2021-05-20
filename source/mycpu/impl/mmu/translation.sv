@@ -5,7 +5,7 @@ module translation(
 	input logic clk, resetn,
 
 	// address translation requests
-	input logic k0_uncached,
+	input logic k0_uncached, is_store,
 	input  tu_addr_req_t  i_req,  d_req,
 	output tu_addr_resp_t i_resp, d_resp,
     
@@ -34,12 +34,12 @@ module translation(
 	end
 	assign i_resp.paddr = i_mapped ? inst_paddr_tlb/* _delayed */ : inst_paddr_direct;
 	assign d_resp.paddr = d_mapped ? data_paddr_tlb/* _delayed */ : data_paddr_direct;
-	assign op_resp.i_tlb_invalid = i_mapped & i_invalid;
-	assign op_resp.i_tlb_modified = i_mapped & ~i_invalid & ~i_dirty;
-	assign op_resp.d_tlb_invalid = d_mapped & d_invalid;
-	assign op_resp.d_tlb_modified = d_mapped & ~d_invalid & ~d_dirty;
-	assign op_resp.i_tlb_refill = i_mapped & ~i_hit;
-	assign op_resp.d_tlb_refill = d_mapped & ~d_hit;
+	assign op_resp.i_tlb_invalid = i_mapped & i_invalid & i_req.req;
+	assign op_resp.i_tlb_modified = i_mapped & ~i_invalid & ~i_dirty & i_req.req & 1'b0;
+	assign op_resp.d_tlb_invalid = d_mapped & d_invalid& d_req.req;
+	assign op_resp.d_tlb_modified = d_mapped & ~d_invalid & ~d_dirty& d_req.req&is_store;
+	assign op_resp.i_tlb_refill = i_mapped & ~i_hit & i_req.req;
+	assign op_resp.d_tlb_refill = d_mapped & ~d_hit& d_req.req;
 	assign op_resp.i_mapped = i_mapped;
 	assign op_resp.d_mapped = d_mapped;
 	trans_direct i_map_inst(
@@ -159,18 +159,18 @@ module translation(
 			 .vaddr(entryhi),
 			 .asid,
 			 .tlblut_resp(tlbp_resp));
-	logic i_invalid_new, d_invalid_new; 
-	logic i_dirty_new, d_dirty_new;
-	logic i_hit_new, d_hit_new;
-	logic [2:0] d_cache_flag_new;
-	assign i_invalid_new = ~i_resp.valid;
-	assign d_invalid_new = ~d_resp.valid;
-	assign i_dirty_new = i_resp.dirty;
-	assign d_dirty_new = d_resp.dirty;
-	assign i_hit_new = i_resp.hit;
-	assign d_hit_new = d_resp.hit;
-	assign d_cache_flag_new = d_resp.cache_flag;
-	always_ff @(posedge clk) begin
+	// logic i_invalid_new, d_invalid_new; 
+	// logic i_dirty_new, d_dirty_new;
+	// logic i_hit_new, d_hit_new;
+	// logic [2:0] d_cache_flag_new;
+	assign i_invalid/* _new */ = ~i_resp.valid;
+	assign d_invalid/* _new */ = ~d_resp.valid;
+	assign i_dirty/* _new */ = i_resp.dirty;
+	assign d_dirty/* _new */ = d_resp.dirty;
+	assign i_hit/* _new */ = i_resp.hit;
+	assign d_hit/* _new */ = d_resp.hit;
+	assign d_cache_flag/* _new */ = d_resp.cache_flag;
+	/* always_ff @(posedge clk) begin
 	    if (~resetn) begin
 		{i_invalid, d_invalid, i_dirty, d_dirty, i_hit, d_hit, d_cache_flag} <= '0;
 	    end
@@ -178,7 +178,7 @@ module translation(
 		{i_invalid, d_invalid, i_dirty, d_dirty, i_hit, d_hit, d_cache_flag} <= 
 		{i_invalid_new, d_invalid_new, i_dirty_new, d_dirty_new, i_hit_new, d_hit_new, d_cache_flag_new};
 	    end
-	end
+	end */
     endmodule
     
 module tlb_lut (

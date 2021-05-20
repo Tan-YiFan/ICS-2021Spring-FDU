@@ -30,7 +30,16 @@ module cp0
                 cp0_nxt.count = cp0_nxt.count + {31'b0, count_switch};
                 if (self.write.valid) begin
                         unique case(self.write.id)
+                                5'd0: cp0_nxt.index[4:0] = self.write.data[4:0];
+                                5'd2: cp0_nxt.entrylo0[PABITS-7:0] = self.write.data[PABITS-7:0];
+                                5'd3: cp0_nxt.entrylo1[PABITS-7:0] = self.write.data[PABITS-7:0];
+                                5'd4: cp0_nxt.context_.ptebase = self.write.data[31:23];
+                                5'd6: cp0_nxt.wired.wired = self.write.data[TLB_INDEX-1:0];
                                 5'd9: cp0_nxt.count = self.write.data;
+                                5'd10: begin
+                                        cp0_nxt.entryhi.vpn2 = self.write.data[31:13];
+                                        cp0_nxt.entryhi.asid = self.write.data[7:0];
+                                end 
                                 5'd11: cp0_nxt.compare = self.write.data;
                                 5'd12: begin
                                         cp0_nxt.status.IE = self.write.data[0];
@@ -41,6 +50,10 @@ module cp0
                                         cp0_nxt.cause.IP[1:0] = self.write.data[9:8];
                                 end
                                 5'd14: cp0_nxt.epc = self.write.data;
+                                5'd16: begin
+                                        cp0_nxt.config_[30:25] = self.write.data[30:25];
+                                        cp0_nxt.config_.K0 = self.write.data[2:0];
+                                end
                                 default: begin
                                         
                                 end
@@ -78,7 +91,12 @@ module cp0
                                 end else begin
                                         cp0_nxt.cause.TI = '0;
                                 end
-                        end
+                            end
+                            if (exception_info.code == CODE_TLBL || exception_info.code == CODE_MOD || exception_info.code == CODE_TLBS) begin
+                                cp0_nxt.badvaddr = exception_info.badvaddr;
+                                cp0_nxt.context_.badvpn2 = exception_info.badvaddr[31:13]; // ??
+                                cp0_nxt.entryhi.vpn2 = exception_info.badvaddr[31:13];  
+                            end
                 end
                 if (exception.is_eret) begin
                         if (cp0.status.ERL) begin
@@ -145,6 +163,6 @@ module cp0
         assign pcselect.is_eret = exception.is_eret;
         assign entryhi = cp0.entryhi;
         assign entrylo0 = cp0.entrylo0;
-        assign entryhi = cp0.entryhi;
+        assign entrylo1 = cp0.entrylo1;
         assign index = cp0.index;
 endmodule

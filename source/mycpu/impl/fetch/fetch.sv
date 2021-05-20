@@ -7,9 +7,11 @@ module fetch
     freg_intf.fetch freg,
     dreg_intf.fetch dreg,
     input instr_t raw_instr,
-    input tu_op_resp_t tu_op_resp
+    input tu_op_resp_t tu_op_resp /* verilator split_var */
 );
     word_t pc, pcplus4F;
+    logic exception_instr;
+    assign exception_instr = |pc[1:0];
     // word_t raw_instr;
 
     assign pcplus4F = pc + 32'b100;

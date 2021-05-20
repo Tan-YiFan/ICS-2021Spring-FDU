@@ -191,7 +191,8 @@ interface exception_intf();
     logic is_store;
 	
 	modport memory(
-		input timer_interrupt,
+		input timer_interrupt, d_tlb_invalid, d_tlb_modified,
+        d_tlb_refill,
 		output instr, ri, ov, sys, bp, store, load, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
             i_tlb_invalid, i_tlb_modified, i_tlb_refill, is_store
@@ -210,7 +211,8 @@ interface exception_intf();
 		output timer_interrupt
 	);
     modport mmu(
-        output d_tlb_invalid, d_tlb_modified, d_tlb_refill
+        output d_tlb_invalid, d_tlb_modified, d_tlb_refill,
+        input is_store
     );
 
 endinterface

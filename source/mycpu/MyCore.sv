@@ -51,7 +51,7 @@ module MyCore
 
     ibus_req_t ireq_virt;
     dbus_req_t dreq_virt;
-    assign ireq_virt.valid = ~fetch.dataF.exception_instr;
+    assign ireq_virt.valid = ~fetch.exception_instr;
     assign ireq_virt.addr = pc;
     assign dreq_virt.valid = mread.valid | mwrite.valid;
     assign dreq_virt.size = msize_t'(mwrite.valid ? mwrite.size : mread.size);
@@ -63,8 +63,8 @@ module MyCore
     assign i_data_ok = iresp.data_ok | ~ireq.valid;
     assign d_data_ok = dresp.data_ok | ~dreq.valid;
 
-    tu_op_req_t tu_op_req;
-    tu_op_resp_t tu_op_resp;
+    tu_op_req_t tu_op_req/* verilator split_var */;
+    tu_op_resp_t tu_op_resp/* verilator split_var */;
     pcselect_intf pcselect_intf();
     freg_intf freg_intf(.pc);
     dreg_intf dreg_intf();
@@ -89,7 +89,8 @@ module MyCore
         .pcselect(pcselect_intf.fetch),
         .freg(freg_intf.fetch),
         .dreg(dreg_intf.fetch),
-        .raw_instr(iresp.data)
+        .raw_instr(iresp.data),
+        .tu_op_resp
     );
     decode decode(
         .clk, .resetn,
@@ -205,6 +206,7 @@ module MyCore
         .clk, .resetn,
         .tu_op_req, .tu_op_resp,
         .ireq_virt, .dreq_virt,
-        .ireq, .dreq
+        .ireq, .dreq,
+        .exception(exception_intf.mmu)
     );
 endmodule

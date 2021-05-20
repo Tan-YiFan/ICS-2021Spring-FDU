@@ -67,7 +67,8 @@ module memory
 					mreg.dataE.cp0_cause.IP) & mreg.dataE.cp0_status.IM;
 	assign exception.in_delay_slot = mreg.dataE.in_delay_slot;
 	assign exception.pc = mreg.dataE.pcplus4 - 4;
-	assign exception.badvaddr = invalid_addr ? mreg.dataE.aluout : exception.pc;
+	assign exception.badvaddr = invalid_addr | exception.d_tlb_invalid
+			| exception.d_tlb_modified | exception.d_tlb_refill ? mreg.dataE.aluout : exception.pc;
 	assign exception.cp0_status = mreg.dataE.cp0_status;
 	assign exception.cp0_cause = mreg.dataE.cp0_cause;
 	assign exception.is_eret = mreg.dataE.instr.ctl.is_eret;
@@ -78,4 +79,5 @@ module memory
 
 	assign cp0.is_tlbp = mreg.dataE.instr.ctl.is_tlbp;
 	assign cp0.is_tlbr = mreg.dataE.instr.ctl.is_tlbr;
+	assign is_tlbwi = mreg.dataE.instr.ctl.is_tlbwi;
 endmodule

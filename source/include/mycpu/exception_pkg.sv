@@ -30,6 +30,7 @@ typedef struct packed {
 } exception_t;
 
 parameter EXC_ENTRY = 32'hbfc0_0380;
+parameter REFILL_ENTRY = 32'hbfc0_0200;
 
 endpackage
 
