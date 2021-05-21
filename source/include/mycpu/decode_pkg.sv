@@ -37,6 +37,9 @@ package decode_pkg;
         logic is_tlbwi;
         logic is_tlbr;
         logic is_tlbp;
+        logic is_movn;
+        logic is_movz;
+        logic is_wait;
     } control_t;
     typedef enum logic [6: 0] { 
         ADDI, ADDIU, SLTI, SLTIU, ANDI, ORI, XORI, 
@@ -138,6 +141,7 @@ package decode_pkg;
     parameter logic [5:0] F_SYSCALL   =    6'b001100;
     parameter logic [5:0] F_MOVZ      =    6'b001010;
     parameter logic [5:0] F_MOVN      =    6'b001011;
+    parameter logic [5:0] F_SYNC      =    6'b001111;
     
     parameter logic [5:0] M_MUL       =    6'b011000;
     parameter logic [5:0] M_CLO       =    6'b100001;

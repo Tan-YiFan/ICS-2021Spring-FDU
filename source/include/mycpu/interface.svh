@@ -133,13 +133,14 @@ interface hazard_intf(input logic i_data_ok, d_data_ok);
     writeback_data_t dataW;
     logic mult_ok;
     logic exception_valid, is_eret;
+    logic is_wait;
 
     modport hazard(output stallF, stallD, stallE, stallM,
 			flushD, flushE, flushM, flushW,
-		 input dataD, dataE, dataM, dataW, i_data_ok, d_data_ok, mult_ok, is_eret, exception_valid);
+		 input dataD, dataE, dataM, dataW, i_data_ok, d_data_ok, mult_ok, is_eret, exception_valid, is_wait);
     modport decode(output dataD, input stallD, flushD);
     modport execute(output dataE, mult_ok);
-    modport memory(output dataM);
+    modport memory(output dataM, is_wait);
     modport writeback(output dataW);
     modport exception(output is_eret, exception_valid);
 endinterface

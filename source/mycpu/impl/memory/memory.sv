@@ -55,6 +55,7 @@ module memory
 
 	assign forward.dataM = dataM;
 	assign hazard.dataM = dataM;
+	assign hazard.is_wait = dataM.instr.ctl.is_wait;
 
 	assign exception.instr = mreg.dataE.exception_instr;
 	assign exception.ri = mreg.dataE.exception_ri;

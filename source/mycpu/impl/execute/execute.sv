@@ -55,7 +55,15 @@ module execute
         .ok(hazard.mult_ok)
     );
     execute_data_t dataE /* verilator split_var */;
-    assign dataE.instr = ereg.dataD.instr;
+    // assign dataE.instr = ereg.dataD.instr;
+    always_comb begin
+        dataE.instr = ereg.dataD.instr;
+        if ((dataE.instr.ctl.is_movn && alusrcb == '0) || 
+        (dataE.instr.ctl.is_movz && alusrcb != '0)) begin
+            dataE.instr.ctl.regwrite = '0;
+        end
+    end
+    
     assign dataE.exception_instr = ereg.dataD.exception_instr;
     assign dataE.exception_ri = ereg.dataD.instr.exception_ri;
     assign dataE.exception_of = exception_of;

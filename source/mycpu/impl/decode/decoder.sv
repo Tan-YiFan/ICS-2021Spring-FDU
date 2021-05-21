@@ -195,6 +195,19 @@ module decoder
 						ctl.alufunc = ALU_PASSA;
 						ctl.is_sys = 1'b1;
 					end
+					F_MOVZ: begin
+						op = MOVZ;
+						ctl.alufunc = ALU_PASSA;
+						ctl.is_movz = 1'b1;
+					end
+					F_MOVN: begin
+						op = MOVN;
+						ctl.alufunc = ALU_PASSA;
+						ctl.is_movn = 1'b1;
+					end
+					F_SYNC: begin
+						
+					end
 					default: begin
 						exception_ri = 1'b1;
 						op = RESERVED;
@@ -442,6 +455,11 @@ module decoder
 								op = TLBWI;
 								ctl.is_tlbwi = 1'b1;
 							end
+							C_WAIT: begin
+								op = WAIT_EX;
+								ctl.is_wait = 1'b1;
+								
+							end
 							default: begin
 								exception_ri = 1'b1;
 								op = RESERVED;
@@ -450,7 +468,9 @@ module decoder
 					end
 				endcase
 			end
-
+			OP_CACHE: begin
+				
+			end
 			default: begin
 				exception_ri = 1'b1;
 				op = RESERVED;
@@ -473,7 +493,7 @@ module decoder
 		if (ctl.alufunc == ALU_PASSA) begin
 			instr.srcb = '0;
 		end
-		if (ctl.memwrite | ctl.memread) begin
+		if (ctl.memwrite | ctl.memread | ctl.is_movn | ctl.is_movz) begin
 			instr.srcb = rt;
 		end
 		// if (ctl.cp0toreg) begin

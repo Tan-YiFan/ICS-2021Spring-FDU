@@ -15,14 +15,14 @@
 - [ ] LWR
 - [ ] SWL
 - [ ] SWR
-- [ ] SYNC
-- [ ] MOVN
-- [ ] MOVZ
-- [ ] CACHE
+- [x] SYNC: skipped
+- [x] MOVN
+- [x] MOVZ: change regwrite in stage E if condition failed
+- [x] CACHE: skipped
 - [ ] TLBP
-- [ ] TLBR
-- [ ] TLBWI
-- [ ] TLBWR
-- [ ] WAIT
+- [x] TLBR
+- [x] TLBWI
+- [x] TLBWR
+- [x] WAIT: stall until exception, this exception must be interrupt
 
 ## TLB
