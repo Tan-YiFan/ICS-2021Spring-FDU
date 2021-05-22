@@ -65,6 +65,7 @@ module MyCore
 
     tu_op_req_t tu_op_req/* verilator split_var */;
     tu_op_resp_t tu_op_resp/* verilator split_var */;
+    logic is_usermode;
     pcselect_intf pcselect_intf();
     freg_intf freg_intf(.pc);
     dreg_intf dreg_intf();
@@ -101,7 +102,8 @@ module MyCore
         .hazard(hazard_intf.decode),
         .regfile(regfile_intf.decode),
         .hilo(hilo_intf.decode),
-        .cp0(cp0_intf.decode)
+        .cp0(cp0_intf.decode),
+        .is_usermode
     );
     execute execute(
         .clk, .resetn,
@@ -119,7 +121,8 @@ module MyCore
         .exception(exception_intf.memory),
         .ext_int,
         .is_tlbwi(tu_op_req.is_tlbwi),
-        .cp0(cp0_intf.memory)
+        .cp0(cp0_intf.memory),
+        .is_usermode
     );
     writeback writeback(
         .wreg(wreg_intf.writeback),
@@ -160,7 +163,8 @@ module MyCore
         .entrylo0(tu_op_req.entrylo0),
         .entrylo1(tu_op_req.entrylo1),
         .index(tu_op_req.index),
-        .tu_op_resp
+        .tu_op_resp,
+        .is_usermode
     );
     pipereg #(.T(word_t), .INIT(PCINIT)) freg(
         .clk, .resetn,

@@ -40,6 +40,7 @@ package decode_pkg;
         logic is_movn;
         logic is_movz;
         logic is_wait;
+        logic [3:0] ce;
     } control_t;
     typedef enum logic [6: 0] { 
         ADDI, ADDIU, SLTI, SLTIU, ANDI, ORI, XORI, 
@@ -58,6 +59,7 @@ package decode_pkg;
         creg_addr_t srca, srcb, dest;
         control_t ctl;
         logic exception_ri;
+        logic exception_cpu;
     } decoded_instr_t;
     
     typedef struct packed {
@@ -73,6 +75,7 @@ package decode_pkg;
         logic i_tlb_invalid;
         logic i_tlb_modified;
         logic i_tlb_refill;
+        logic exception_cpu;
     } decode_data_t;
 
     //  Group: Parameters
@@ -110,6 +113,7 @@ package decode_pkg;
     parameter logic [5:0] OP_SWL      =    6'b101010;
     parameter logic [5:0] OP_SWR      =    6'b101110;
     parameter logic [5:0] OP_CACHE    =    6'b101111;
+    parameter logic [5:0] OP_COP1     =    6'b010001;
 
     parameter logic [5:0] F_ADD       =    6'b100000;
     parameter logic [5:0] F_ADDU      =    6'b100001;

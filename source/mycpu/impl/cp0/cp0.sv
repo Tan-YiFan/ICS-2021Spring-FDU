@@ -11,7 +11,8 @@ module cp0
         output cp0_entryhi_t entryhi,
         output cp0_entrylo_t entrylo0, entrylo1,
         output cp0_index_t index,
-        input tu_op_resp_t tu_op_resp
+        input tu_op_resp_t tu_op_resp,
+        output logic is_usermode
 );
         cp0_regs_t cp0, cp0_nxt;
 
@@ -44,10 +45,15 @@ module cp0
                                 5'd12: begin
                                         cp0_nxt.status.IE = self.write.data[0];
                                         cp0_nxt.status.EXL = self.write.data[1];
+                                        cp0_nxt.status.ERL = self.write.data[2];
                                         cp0_nxt.status.IM = self.write.data[15:8];
+                                        cp0_nxt.status.CU[0] = self.write.data[28];
+                                        cp0_nxt.status.BEV = self.write.data[22];
+                                        cp0_nxt.status.UM = self.write.data[4];
                                 end
                                 5'd13: begin
                                         cp0_nxt.cause.IP[1:0] = self.write.data[9:8];
+                                        cp0_nxt.cause.IV = self.write.data[23];
                                 end
                                 5'd14: cp0_nxt.epc = self.write.data;
                                 5'd16: begin
@@ -82,7 +88,7 @@ module cp0
                             end
                 
                             cp0_nxt.cause.exccode = exception_info.code;
-                
+                            cp0_nxt.status.UM = 1'b0;
                             cp0_nxt.status.EXL = 1'b1;
                             if (exception_info.code == CODE_ADEL || exception_info.code == CODE_ADES) begin
                                 cp0_nxt.badvaddr = exception_info.badvaddr;
@@ -97,12 +103,26 @@ module cp0
                                 cp0_nxt.context_.badvpn2 = exception_info.badvaddr[31:13]; // ??
                                 cp0_nxt.entryhi.vpn2 = exception_info.badvaddr[31:13];  
                             end
+                            if (exception_info.code == CODE_CPU) begin
+                                    priority case(1'b1)
+                                        exception_info.ce[0]: cp0_nxt.cause.CE = '0;
+                                        exception_info.ce[1]: cp0_nxt.cause.CE = 2'd1;
+                                        exception_info.ce[2]: cp0_nxt.cause.CE = 2'd2;
+                                        exception_info.ce[3]: cp0_nxt.cause.CE = 2'd3;
+                                        default: begin
+                                                
+                                        end
+                                    endcase
+                            end
                 end
                 if (exception.is_eret) begin
                         if (cp0.status.ERL) begin
                                 cp0_nxt.status.ERL = 1'b0;
                         end else begin
                                 cp0_nxt.status.EXL = 1'b0;
+                        end
+                        if (~cp0_nxt.status.EXL & ~cp0_nxt.status.ERL) begin
+                                // cp0_nxt.status.UM = 1'b1;
                         end
                 end
         end
@@ -111,6 +131,7 @@ module cp0
                 if (~resetn) begin
                         cp0 <= '0;
                         cp0.status.BEV <= '1;
+                        cp0.status.ERL <= '1;
                         cp0.prid <= 32'h4220;
                         cp0.config_ <= 32'h80000080;
                         cp0.config_1 <= 32'b00_11111_000_101_111_000_101_011_0000000;
@@ -165,4 +186,5 @@ module cp0
         assign entrylo0 = cp0.entrylo0;
         assign entrylo1 = cp0.entrylo1;
         assign index = cp0.index;
+        assign is_usermode = cp0.status.UM;
 endmodule

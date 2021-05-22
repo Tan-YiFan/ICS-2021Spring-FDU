@@ -11,17 +11,20 @@ module decode
     forward_intf.decode forward,
     hazard_intf.decode hazard,
     hilo_intf.decode hilo,
-    cp0_intf.decode cp0
+    cp0_intf.decode cp0,
+    input logic is_usermode
 );
     decode_data_t dataD /* verilator split_var */;
 
     word_t raw_instr;
     assign raw_instr = dreg.dataF.raw_instr;
     decoded_instr_t instr;
+    
     decoder decoder_inst(
         .raw_instr,
         .instr,
-        .pcplus4(dreg.dataF.pcplus4)
+        .pcplus4(dreg.dataF.pcplus4),
+        .is_usermode
     );
 
     logic in_delay_slot;
@@ -108,6 +111,7 @@ module decode
     assign dataD.rd2 = rd2;
     assign dataD.exception_instr = dreg.dataF.exception_instr;
     assign dataD.exception_ri = dataD.instr.exception_ri;
+    assign dataD.exception_cpu = dataD.instr.exception_cpu;
     assign dataD.cp0_status = cp0.cp0_status;
     assign dataD.cp0_cause = cp0.cp0_cause;
     assign dataD.hi = hilo.hi;

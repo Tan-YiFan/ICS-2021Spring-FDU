@@ -67,6 +67,7 @@ module execute
     assign dataE.exception_instr = ereg.dataD.exception_instr;
     assign dataE.exception_ri = ereg.dataD.instr.exception_ri;
     assign dataE.exception_of = exception_of;
+    assign dataE.exception_cpu = ereg.dataD.instr.exception_cpu;
     assign dataE.aluout = (ereg.dataD.instr.ctl.is_link) ? (ereg.dataD.pcplus4 + 4) : (
         ereg.dataD.instr.ctl.is_mul ? lo : aluout
     );

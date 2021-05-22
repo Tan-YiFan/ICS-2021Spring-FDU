@@ -12,7 +12,8 @@ module memory
 	exception_intf.memory exception,
 	input logic[5:0] ext_int,
 	output logic is_tlbwi,
-	cp0_intf.memory cp0
+	cp0_intf.memory cp0,
+	input logic is_usermode
 );
 	logic invalid_addr;
 	always_comb begin
@@ -24,6 +25,9 @@ module memory
 				invalid_addr = '0;
 			end
 		endcase
+		if (is_usermode && mreg.dataE.aluout[31]) begin
+			invalid_addr = '1;
+		end
 	end
 	
 	assign mread.valid = mreg.dataE.instr.ctl.memread & ~invalid_addr;
@@ -64,6 +68,8 @@ module memory
 	assign exception.bp = mreg.dataE.instr.ctl.is_bp;
 	assign exception.store = invalid_addr & mreg.dataE.instr.ctl.memwrite;
 	assign exception.load = invalid_addr & mreg.dataE.instr.ctl.memread;
+	assign exception.cpu = mreg.dataE.exception_cpu;
+	assign exception.ce = mreg.dataE.instr.ctl.ce;
 	assign exception.interrupt_info = ({ext_int, 2'b00} | {exception.timer_interrupt, 7'b00} |
 					mreg.dataE.cp0_cause.IP) & mreg.dataE.cp0_status.IM;
 	assign exception.in_delay_slot = mreg.dataE.in_delay_slot;

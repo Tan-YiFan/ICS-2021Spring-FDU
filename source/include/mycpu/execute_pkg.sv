@@ -28,6 +28,7 @@ package execute_pkg;
         logic i_tlb_invalid;
         logic i_tlb_modified;
         logic i_tlb_refill;
+        logic exception_cpu;
     } execute_data_t;
     
 

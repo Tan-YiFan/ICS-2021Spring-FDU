@@ -4,7 +4,9 @@ module decoder
 	import decode_pkg::*;(
 	input instr_t raw_instr,
 	input word_t pcplus4,
-	output decoded_instr_t instr
+	output decoded_instr_t instr,
+	input logic is_usermode,
+	input logic [3:0] cu
 );
 	localparam type raw_op_t = logic[5:0];
 	localparam type raw_func_t = logic[5:0];
@@ -32,9 +34,12 @@ module decoder
 	(ctl.zeroext ? {16'b0, raw_instr[15:0]} : 
 	{{16{raw_instr[15]}}, raw_instr[15:0]}));
 	logic exception_ri;
+	logic exception_cpu;
 	assign instr.exception_ri = exception_ri;
+	assign instr.exception_cpu = exception_cpu;
 	always_comb begin : control_signal
 		exception_ri = '0;
+		exception_cpu = '0;
 		ctl = '0;
 		op = decoded_op_t'(0);
 		unique case(raw_op)
@@ -426,6 +431,10 @@ module decoder
 				endcase
 			end
 			OP_PRIV: begin
+				if (is_usermode && ~cu[0]) begin
+					exception_cpu = '1;
+					ctl.ce[0] = '1;
+				end
 				case (raw_instr[25:21])
 					C_MFC0: begin
 						op = MFC0;
@@ -469,6 +478,18 @@ module decoder
 				endcase
 			end
 			OP_CACHE: begin
+				
+			end
+			OP_COP1: begin
+				if ((raw_instr[25:21] == 5'b0 || raw_instr[25:21] == 5'b100) && raw_instr[10:0] == '0) begin
+					exception_cpu = '1;
+					ctl.ce[1] = 1'b1;
+				end else if (raw_instr[5:0] == 6'b000010 || raw_instr[5:0] == 6'b000111 || raw_instr[5:1] == 5'b10110) begin
+					exception_cpu = '1;
+					ctl.ce[1] = 1'b1;
+				end else begin
+					exception_ri = 1'b1;
+				end
 				
 			end
 			default: begin

@@ -91,11 +91,11 @@ typedef struct packed {
 typedef struct packed {
     logic BD;           // 31, Branch Delay Slot. Updated only if status.exl is 0. R
     logic TI;           // 30, Timer Interrupt. R
-    logic [1:0] CE;     // [29:28], cp number when the coprocessor is unusable. Always 0 in this work.
+    logic [1:0] CE;     // [29:28], cp number when the coprocessor is unusable. R
     logic DC;           // 27, Disable Count register. Always 0 in this work.
     logic PCI;          // 26, Performance Counter Interrupt. Always 0 in this work.
     logic [1:0] ASE_0;  // [25:24], reserved for the MCU ASE. Always 0 in this work.
-    logic IV;           // 23, 0: general(0x180); 1: special(0x200). Always 0 in this work.
+    logic IV;           // 23, 0: general(0x180); 1: special(0x200). R/W
     logic WP;           // 22, Watch Exception. Always 0 in this work.
     logic FDCI;         // 21, Fase Debug Channel Interrupt. Always 0 in this work.
     logic [2:0] zero_0; // [20:18]
@@ -107,13 +107,13 @@ typedef struct packed {
 } cp0_cause_t;
 
 typedef struct packed {
-    logic [3:0] CU;     // [31:28], access to cp unit 3 to 0. Always 0 in this work.
+    logic [3:0] CU;     // [31:28], access to cp unit 3 to 0. R/W
     logic RP;           // 27, Reduced Rower mode. Always 0 in this work.
     logic FR;           // 26, Floating point Register mode. Always 0 in this work.
     logic RE;           // 25, Reverse Endian. Always 0 in this work.
     logic MX;           // 24, MDMX and MIPS DSP. Always 0 in this work.
     logic zero_0;       // 23
-    logic BEV;          // 22, location of exception vectors. Always 1 in this work.
+    logic BEV;          // 22, location of exception vectors. R/W
     logic TS;           // 21, mutiple TLB entries. Always 0 in this work.
     logic SR;           // 20, Soft Reset. Always 0 in this work.
     logic NMI;          // 19, reset due to NMI exception. Always 0 in this work.
@@ -121,9 +121,9 @@ typedef struct packed {
     logic [1:0] IMPL;   // [17:16], implementation dependent. Always 0 in this work.
     logic [7:0] IM;     // [15:8], Interrupt Mask. R/W
     logic [2:0] zero_1; // [7:5]
-    logic UM;           // 4, 0: Kernel Mode. 1: User Mode. Always 0 in this work.
+    logic UM;           // 4, 0: Kernel Mode. 1: User Mode. R/W
     logic R0;           // 3, reserved. Always 0 in this work.
-    logic ERL;          // 2, Error Level. Always 0 in this work.
+    logic ERL;          // 2, Error Level. R/W, reset as 1
     logic EXL;          // 1, Exception Level. R/W
     logic IE;           // 0, Interrupt Enable. R/W
 } cp0_status_t;

@@ -27,10 +27,15 @@ typedef struct packed {
 	logic in_delay_slot;
 	exc_code_t code;
 	word_t badvaddr;
+	logic [3:0] ce;
 } exception_t;
 
 parameter EXC_ENTRY = 32'hbfc0_0380;
 parameter REFILL_ENTRY = 32'hbfc0_0200;
+parameter EXC_BASE_BEV0 = 32'h8000_0000;
+parameter EXC_BASE_BEV1 = 32'hbfc0_0200;
+parameter OFFSET_INT = 32'h200;
+parameter OFFSET_GENERAL = 32'h180;
 
 endpackage
 

@@ -22,7 +22,7 @@ module exception
                         interrupt_valid : begin exccode = CODE_INT; tlb_refill = 1'b0;end
                         self.instr : begin exccode = CODE_ADEL;tlb_refill = 1'b0;end
                         self.i_tlb_invalid|self.i_tlb_modified|self.i_tlb_refill : begin exccode = CODE_TLBL;tlb_refill = self.i_tlb_refill;end
-                        // self.cpu: begin exccode = CODE_CPU;tlb_refill = 1'b0;end
+                        self.cpu: begin exccode = CODE_CPU;tlb_refill = 1'b0;end
                         self.ri: begin exccode = CODE_RI;tlb_refill = 1'b0;end
                         self.ov: begin exccode = CODE_OV;tlb_refill = 1'b0;end
                         self.bp: begin exccode = CODE_BP;tlb_refill = 1'b0;end
@@ -66,13 +66,26 @@ module exception
                         exccode = CODE_ADES;
                 end */
         end
+        word_t exc_base;
+        assign exc_base = self.cp0_status.BEV ? EXC_BASE_BEV1 : EXC_BASE_BEV0;
+        word_t location;
+        always_comb begin
+                priority case(1'b1)
+                        interrupt_valid & self.cp0_cause.IV: location = exc_base + OFFSET_INT;
+                        tlb_refill & ~self.cp0_status.EXL: location = exc_base;
+                        
+                        default: location = exc_base + OFFSET_GENERAL;
+                endcase
+        end
+        
         assign self.exception_info = '{
                 valid : exception_valid,
-                location: tlb_refill ? REFILL_ENTRY : EXC_ENTRY,
+                location: location, //tlb_refill ? REFILL_ENTRY : EXC_ENTRY,
                 pc: self.pc,
                 in_delay_slot: self.in_delay_slot,
                 code: exccode,
-                badvaddr: self.badvaddr
+                badvaddr: self.badvaddr,
+                ce: self.ce
         };
 
         assign hazard.is_eret = self.is_eret;

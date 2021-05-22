@@ -174,7 +174,7 @@ interface exception_intf();
 	import exception_pkg::*;
 	import cp0_pkg::*;
 
-	logic instr, ri, ov, sys, bp, store, load;
+	logic instr, ri, ov, sys, bp, store, load, cpu;
 	logic [7:0] interrupt_info;
 	exception_t exception_info;
 	logic in_delay_slot;
@@ -190,21 +190,23 @@ interface exception_intf();
 	logic i_tlb_refill;
 	logic d_tlb_refill;
     logic is_store;
+    logic [3:0] ce;
 	
 	modport memory(
 		input timer_interrupt, d_tlb_invalid, d_tlb_modified,
         d_tlb_refill,
-		output instr, ri, ov, sys, bp, store, load, interrupt_info, in_delay_slot,
+		output instr, ri, ov, sys, bp, store, load, cpu, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
-            i_tlb_invalid, i_tlb_modified, i_tlb_refill, is_store
+            i_tlb_invalid, i_tlb_modified, i_tlb_refill, is_store,
+            ce
 	);
 	modport exception(
-		input instr, ri, ov, sys, bp, store, load, interrupt_info, in_delay_slot,
+		input instr, ri, ov, sys, bp, store, load, cpu, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
             i_tlb_invalid, i_tlb_modified,
             i_tlb_refill,
             d_tlb_invalid, d_tlb_modified,
-            d_tlb_refill, is_store,
+            d_tlb_refill, is_store, ce,
 		output exception_info
 	);
 	modport cp0(
