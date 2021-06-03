@@ -202,16 +202,42 @@ module decoder
 					end
 					F_MOVZ: begin
 						op = MOVZ;
+						ctl.regwrite = 1'b1;
 						ctl.alufunc = ALU_PASSA;
 						ctl.is_movz = 1'b1;
 					end
 					F_MOVN: begin
 						op = MOVN;
+						ctl.regwrite = 1'b1;
 						ctl.alufunc = ALU_PASSA;
 						ctl.is_movn = 1'b1;
 					end
 					F_SYNC: begin
 						
+					end
+					F_TEQ: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TEQ;
+					end
+					F_TGE: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TGE;
+					end
+					F_TGEU: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TGEU;
+					end
+					F_TLT: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TLT;
+					end
+					F_TLTU: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TLTU;
+					end
+					F_TNE: begin
+						ctl.is_trap = 1'b1;
+						ctl.trap_type = TRAP_TNE;
 					end
 					default: begin
 						exception_ri = 1'b1;
@@ -270,17 +296,17 @@ module decoder
 				ctl.alusrc = IMM;
 				ctl.zeroext = 1'b1;
 			end
-			OP_BEQ: begin
+			OP_BEQ, OP_BEQL: begin
 				op = BEQ;
 				ctl.branch = 1'b1;
 				ctl.branch_type = T_BEQ;
 			end
-			OP_BNE: begin
+			OP_BNE, OP_BNEL: begin
 				op = BNE;
 				ctl.branch = 1'b1;
 				ctl.branch_type = T_BNE;
 			end
-			OP_BGEZ: begin
+			OP_REGIMM: begin
 				unique case (raw_instr[20:16])
 					B_BGEZ:  begin
 						op = BGEZ;
@@ -305,7 +331,37 @@ module decoder
 						ctl.regwrite = 1'b1;
 						ctl.branch_type = T_BLTZ;
 						ctl.is_link = 'b1;
-					end 
+					end
+					F_TEQI: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TEQ;
+					end
+					F_TGEI: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TGE;
+					end
+					F_TGEIU: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TGEU;
+					end
+					F_TLTI: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TLT;
+					end
+					F_TLTIU: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TLTU;
+					end
+					F_TNEI: begin
+						ctl.is_trap = 1'b1;
+						ctl.alusrc = IMM;
+						ctl.trap_type = TRAP_TNE;
+					end
 					default: begin
 						exception_ri = 1'b1;
 						op = RESERVED;
@@ -364,7 +420,7 @@ module decoder
 				ctl.mem_size = 2'b01;
 				ctl.mem_type = MEM_LHU;
 			end
-			OP_LW: begin
+			OP_LW, OP_LL: begin
 				op = LW;
 				ctl.regwrite = 1'b1;
 				ctl.memread = 1'b1;
@@ -386,7 +442,7 @@ module decoder
 				ctl.mem_size = 2'b01;
 				ctl.mem_type = MEM_SH;
 			end
-			OP_SW: begin
+			OP_SW, OP_SC: begin
 				op = SW;
 				ctl.memwrite = 1'b1;
 				ctl.alusrc = IMM;
@@ -414,15 +470,35 @@ module decoder
 					end
 					M_ADD: begin
 						op = MADD;
+						ctl.is_multdiv = 1'b1;
+						ctl.multicycle_type = M_MADD;
+                                                ctl.is_mul = 1'b1;
+						ctl.hiwrite = 1'b1;
+						ctl.lowrite = 1'b1;
 					end
 					M_ADDU: begin
 						op = MADDU;
+						ctl.is_multdiv = 1'b1;
+						ctl.multicycle_type = M_MADDU;
+                                                ctl.is_mul = 1'b1;
+						ctl.hiwrite = 1'b1;
+						ctl.lowrite = 1'b1;
 					end
 					M_SUB: begin
 						op = MSUB;
+						ctl.is_multdiv = 1'b1;
+						ctl.multicycle_type = M_MSUB;
+                                                ctl.is_mul = 1'b1;
+						ctl.hiwrite = 1'b1;
+						ctl.lowrite = 1'b1;
 					end
 					M_SUBU: begin
 						op = MSUBU;
+						ctl.is_multdiv = 1'b1;
+						ctl.multicycle_type = M_MSUBU;
+                                                ctl.is_mul = 1'b1;
+						ctl.hiwrite = 1'b1;
+						ctl.lowrite = 1'b1;
 					end
 					default: begin
 						exception_ri = 1'b1;
@@ -477,7 +553,7 @@ module decoder
 					end
 				endcase
 			end
-			OP_CACHE: begin
+			OP_CACHE, OP_PREF: begin
 				
 			end
 			OP_COP1: begin
@@ -491,6 +567,38 @@ module decoder
 					exception_ri = 1'b1;
 				end
 				
+			end
+			OP_LWL: begin
+				op = LWL;
+				ctl.alusrc = IMM;
+				ctl.mem_type = MEM_LWL;
+				ctl.memread = 1'b1;
+				ctl.regwrite = 1'b1;
+				ctl.mem_size = 2'b10;
+				ctl.unaligned_regwrite = 1'b1;
+			end
+			OP_LWR: begin
+				op = LWR;
+				ctl.alusrc = IMM;
+				ctl.mem_type = MEM_LWR;
+				ctl.memread = 1'b1;
+				ctl.regwrite = 1'b1;
+				ctl.mem_size = 2'b10;
+				ctl.unaligned_regwrite = 1'b1;
+			end
+			OP_SWL: begin
+				op = LWL;
+				ctl.alusrc = IMM;
+				ctl.mem_type = MEM_SWL;
+				ctl.memwrite = 1'b1;
+				ctl.mem_size = 2'b10;
+			end
+			OP_SWR: begin
+				op = LWR;
+				ctl.alusrc = IMM;
+				ctl.mem_type = MEM_SWR;
+				ctl.memwrite = 1'b1;
+				ctl.mem_size = 2'b10;
 			end
 			default: begin
 				exception_ri = 1'b1;

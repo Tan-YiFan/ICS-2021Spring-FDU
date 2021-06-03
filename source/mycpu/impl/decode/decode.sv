@@ -132,6 +132,7 @@ module decode
     assign forward.dataD = dataD;
     assign hazard.dataD = dataD;
     assign cp0.ra = raw_instr[15:11];
+    assign cp0.sel = raw_instr[2:0];
 
     assign dataD.i_tlb_invalid = dreg.dataF.i_tlb_invalid;
     assign dataD.i_tlb_modified = dreg.dataF.i_tlb_modified;

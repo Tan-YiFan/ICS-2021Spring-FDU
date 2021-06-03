@@ -8,7 +8,7 @@ module count_clo
                 out = 32;
                 for (int i = 31; i >= 0; i--) begin
                         if (~in[i]) begin
-                                out = i;
+                                out = 31 - i;
                                 break;
                         end
                 end

@@ -29,6 +29,7 @@ package execute_pkg;
         logic i_tlb_modified;
         logic i_tlb_refill;
         logic exception_cpu;
+        logic exception_tr;
     } execute_data_t;
     
 

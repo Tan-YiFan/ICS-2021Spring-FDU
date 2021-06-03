@@ -45,9 +45,9 @@ module MyCore
     assign wb_id = rfwrite.id;
     word_t wb_value/* verilator public_flat_rd */;
     assign wb_value = rfwrite.data;
-    logic wb_en/* verilator public_flat_rd */;
-    word_t pc;
-    assign wb_en = rfwrite.valid;
+    logic[3:0] wb_en/* verilator public_flat_rd */;
+    (*mark_debug = "true"*)word_t pc;
+    assign wb_en = {4{rfwrite.valid}};
 
     ibus_req_t ireq_virt;
     dbus_req_t dreq_virt;
@@ -140,7 +140,7 @@ module MyCore
         .self(forward_intf.forward)
     );
     regfile regfile (
-        .clk,
+        .clk, .resetn,
         .self(regfile_intf.regfile)
     );
 

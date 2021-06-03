@@ -108,3 +108,15 @@ dump-instructions:
 	$(call dump,misc/nscscc/stream_copy.coe)
 	$(call dump,misc/nscscc/stringsearch.coe)
 	$(MAKE) clean
+
+test:
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test1
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test2
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test3
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test4
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test1 VSIM_ARGS="-p 0.9"
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test2 VSIM_ARGS="-p 0.9"
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test3 VSIM_ARGS="-p 0.9"
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=test4 VSIM_ARGS="-p 0.9"
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=func_test
+	make vsim -j TARGET=mycpu/VTop  CXX=g++-8 TEST=func_test VSIM_ARGS="-p 0.9"

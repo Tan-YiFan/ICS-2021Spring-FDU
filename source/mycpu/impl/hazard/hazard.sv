@@ -45,14 +45,20 @@ module hazard
     assign i_data_ok = self.i_data_ok;
     assign d_data_ok = self.d_data_ok;
 
+    logic unaligned_regwrite;
+    wire unaligned_regwriteE = self.dataE.instr.ctl.unaligned_regwrite;
+    wire unaligned_regwriteM = self.dataM.instr.ctl.unaligned_regwrite;
+    wire unaligned_regwriteW = self.dataW.instr.ctl.unaligned_regwrite;
+    assign unaligned_regwrite = unaligned_regwriteE | unaligned_regwriteM | unaligned_regwriteW;
+
     wire flush_ex = self.exception_valid | self.is_eret;
-    assign self.stallF = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall | cp0_stall | self.is_wait;
-    assign self.stallD = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall | cp0_stall | self.is_wait;
+    assign self.stallF = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall | cp0_stall | self.is_wait | unaligned_regwrite;
+    assign self.stallD = ~i_data_ok | ~d_data_ok | lwstall | branchstall | multdiv_stall | cp0_stall | self.is_wait | unaligned_regwrite;
     assign self.stallE = (~d_data_ok) | ~self.mult_ok | self.is_wait;
     assign self.stallM = ~d_data_ok | flush_ex | self.is_wait;
 
     assign self.flushD = flush_ex;
-    assign self.flushE = ((lwstall | branchstall | ~i_data_ok | multdiv_stallM | multdiv_stallW | cp0_stallM | cp0_stallW) & self.mult_ok) | flush_ex;
+    assign self.flushE = ((lwstall | branchstall | ~i_data_ok | multdiv_stallM | multdiv_stallW | cp0_stallM | cp0_stallW | unaligned_regwriteM | unaligned_regwriteW) & self.mult_ok) | flush_ex;
     assign self.flushM = ~self.mult_ok | multdiv_stallW | multdiv_stallM | cp0_stallM | (flush_ex & i_data_ok);
     assign self.flushW = ~d_data_ok | flush_ex | self.is_wait;
 endmodule

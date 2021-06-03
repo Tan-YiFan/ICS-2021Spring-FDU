@@ -9,7 +9,7 @@ module memory
 	wreg_intf.memory wreg,
 	forward_intf.memory forward,
 	hazard_intf.memory hazard,
-	exception_intf.memory exception,
+	(*mark_debug = "true"*)exception_intf.memory exception,
 	input logic[5:0] ext_int,
 	output logic is_tlbwi,
 	cp0_intf.memory cp0,

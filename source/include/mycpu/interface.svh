@@ -104,9 +104,10 @@ endinterface
 interface regfile_intf(output creg_write_req rfwrite);
     creg_addr_t ra1, ra2;
     word_t src1, src2;
-    modport regfile(input ra1, ra2, rfwrite, output src1, src2);
+    word_t original;
+    modport regfile(input ra1, ra2, rfwrite, output src1, src2, output original);
     modport decode(input src1, src2, output ra1, ra2);
-    modport writeback(output rfwrite);
+    modport writeback(output rfwrite, input original);
 endinterface
 
 interface hilo_intf();
@@ -174,34 +175,34 @@ interface exception_intf();
 	import exception_pkg::*;
 	import cp0_pkg::*;
 
-	logic instr, ri, ov, sys, bp, store, load, cpu;
-	logic [7:0] interrupt_info;
-	exception_t exception_info;
+	(*mark_debug = "true"*)logic instr, ri, ov, sys, bp, store, load, cpu, tr;
+	(*mark_debug = "true"*)logic [7:0] interrupt_info;
+	(*mark_debug = "true"*)exception_t exception_info;
 	logic in_delay_slot;
 	word_t pc, badvaddr;
 	cp0_status_t cp0_status;
 	cp0_cause_t cp0_cause;
-    	logic is_eret;
-	logic timer_interrupt;
-    logic i_tlb_invalid; // && req
-	logic i_tlb_modified; // && is store
-	logic d_tlb_invalid; // && req
-	logic d_tlb_modified; // && is store
-	logic i_tlb_refill;
-	logic d_tlb_refill;
-    logic is_store;
+    (*mark_debug = "true"*)	logic is_eret;
+        (*mark_debug = "true"*)logic timer_interrupt;
+    (*mark_debug = "true"*)logic i_tlb_invalid; // && req
+	(*mark_debug = "true"*)logic i_tlb_modified; // && is store
+	(*mark_debug = "true"*)logic d_tlb_invalid; // && req
+	(*mark_debug = "true"*)logic d_tlb_modified; // && is store
+	(*mark_debug = "true"*)logic i_tlb_refill;
+	(*mark_debug = "true"*)logic d_tlb_refill;
+    (*mark_debug = "true"*)logic is_store;
     logic [3:0] ce;
 	
 	modport memory(
 		input timer_interrupt, d_tlb_invalid, d_tlb_modified,
         d_tlb_refill,
-		output instr, ri, ov, sys, bp, store, load, cpu, interrupt_info, in_delay_slot,
+		output instr, ri, ov, sys, bp, store, load, cpu, tr, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
             i_tlb_invalid, i_tlb_modified, i_tlb_refill, is_store,
             ce
 	);
 	modport exception(
-		input instr, ri, ov, sys, bp, store, load, cpu, interrupt_info, in_delay_slot,
+		input instr, ri, ov, sys, bp, store, load, cpu, tr, interrupt_info, in_delay_slot,
 			pc, badvaddr, cp0_status, cp0_cause, is_eret,
             i_tlb_invalid, i_tlb_modified,
             i_tlb_refill,
@@ -210,7 +211,7 @@ interface exception_intf();
 		output exception_info
 	);
 	modport cp0(
-		input exception_info, is_eret,
+		input exception_info, is_eret, interrupt_info,
 		output timer_interrupt
 	);
     modport mmu(

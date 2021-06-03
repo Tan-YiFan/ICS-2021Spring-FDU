@@ -27,7 +27,7 @@ module exception
                         self.ov: begin exccode = CODE_OV;tlb_refill = 1'b0;end
                         self.bp: begin exccode = CODE_BP;tlb_refill = 1'b0;end
                         self.sys: begin exccode = CODE_SYS;tlb_refill = 1'b0;end
-                        // self.tr: begin exccode = CODE_TR;tlb_refill = 1'b0;end
+                        self.tr: begin exccode = CODE_TR;tlb_refill = 1'b0;end
                         self.load: begin exccode = CODE_ADEL;tlb_refill = 1'b0;end
                         self.store: begin exccode = CODE_ADES;tlb_refill = 1'b0;end
                         self.d_tlb_invalid|self.d_tlb_refill: begin 

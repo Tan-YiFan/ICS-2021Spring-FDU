@@ -16,7 +16,7 @@ module multicycle
         .clk, .resetn,
         .a, .b,
         .hi(hi_m), .lo(lo_m),
-        .is_signed(multicycle_type == M_MULT),
+        .is_signed(multicycle_type == M_MULT || multicycle_type == M_MADD || multicycle_type == M_MSUB),
         .valid(is_multdiv)
     );
     // divider
@@ -28,8 +28,8 @@ module multicycle
         .is_signed(multicycle_type == M_DIV),
         .valid(is_multdiv)
     );
-    assign hi = (multicycle_type == M_MULT || multicycle_type == M_MULTU) ? hi_m : hi_d;
-    assign lo = (multicycle_type == M_MULT || multicycle_type == M_MULTU) ? lo_m : lo_d;
+    assign hi = (multicycle_type == M_DIV || multicycle_type == M_DIVU) ? hi_d : hi_m;
+    assign lo = (multicycle_type == M_DIV || multicycle_type == M_DIVU) ? lo_d : lo_m;
     localparam MULT_DELAY = 1 << 2;
     localparam logic[35:0] DIV_DELAY = 1 << 32;
     localparam type state_t = enum logic {INIT, DOING};
@@ -52,7 +52,7 @@ module multicycle
             INIT: begin
                 if (is_multdiv) begin
                     case (multicycle_type)
-                        M_MULTU: begin
+                        M_MULTU, M_MADD, M_MSUB, M_MADDU, M_MSUBU: begin
                             counter_new = MULT_DELAY;
                             state_new = DOING;
                         end

@@ -41,6 +41,9 @@ package decode_pkg;
         logic is_movz;
         logic is_wait;
         logic [3:0] ce;
+        logic unaligned_regwrite;
+        logic is_trap;
+        trap_t trap_type;
     } control_t;
     typedef enum logic [6: 0] { 
         ADDI, ADDIU, SLTI, SLTIU, ANDI, ORI, XORI, 
@@ -90,7 +93,7 @@ package decode_pkg;
     parameter logic [5:0] OP_XORI     =    6'b001110;
     parameter logic [5:0] OP_BEQ      =    6'b000100;
     parameter logic [5:0] OP_BNE      =    6'b000101;
-    parameter logic [5:0] OP_BGEZ     =    6'b000001;
+    // parameter logic [5:0] OP_BGEZ     =    6'b000001;
     parameter logic [5:0] OP_BGTZ     =    6'b000111;
     parameter logic [5:0] OP_BLEZ     =    6'b000110;
     parameter logic [5:0] OP_J        =    6'b000010;
@@ -114,6 +117,10 @@ package decode_pkg;
     parameter logic [5:0] OP_SWR      =    6'b101110;
     parameter logic [5:0] OP_CACHE    =    6'b101111;
     parameter logic [5:0] OP_COP1     =    6'b010001;
+    parameter logic [5:0] OP_PREF     =    6'b110011;
+    parameter logic [5:0] OP_BEQL     =    6'b010100;
+    parameter logic [5:0] OP_BNEL     =    6'b010101;
+    parameter logic [5:0] OP_REGIMM   =    6'b000001;
 
     parameter logic [5:0] F_ADD       =    6'b100000;
     parameter logic [5:0] F_ADDU      =    6'b100001;
@@ -146,8 +153,21 @@ package decode_pkg;
     parameter logic [5:0] F_MOVZ      =    6'b001010;
     parameter logic [5:0] F_MOVN      =    6'b001011;
     parameter logic [5:0] F_SYNC      =    6'b001111;
+    parameter logic [5:0] F_TEQ       =    6'b110100;
+    parameter logic [5:0] F_TGE       =    6'b110000;
+    parameter logic [5:0] F_TGEU      =    6'b110001;
+    parameter logic [5:0] F_TLT       =    6'b110010;
+    parameter logic [5:0] F_TLTU      =    6'b110011;
+    parameter logic [5:0] F_TNE       =    6'b110110;
+    parameter logic [4:0] F_TEQI      =    5'b01100;
+    parameter logic [4:0] F_TGEI      =    5'b01000;
+    parameter logic [4:0] F_TGEIU     =    5'b01001;
+    parameter logic [4:0] F_TLTI      =    5'b01010;
+    parameter logic [4:0] F_TLTIU     =    5'b01011;
+    parameter logic [4:0] F_TNEI      =    5'b01110;
     
-    parameter logic [5:0] M_MUL       =    6'b011000;
+
+    parameter logic [5:0] M_MUL       =    6'b000010;
     parameter logic [5:0] M_CLO       =    6'b100001;
     parameter logic [5:0] M_CLZ       =    6'b100000;
     parameter logic [5:0] M_ADD       =    6'b000000;

@@ -14,12 +14,15 @@ module writeback
 );
     assign pc = wreg.dataM.pcplus4 - 4;
     word_t result;
+    /* verilator lint_off UNOPTFLAT */
     word_t readdataW;
+    /* verilator lint_on UNOPTFLAT */
     readdata readdata(
         ._rd(wreg.dataM.rd),
         .mem_type(wreg.dataM.instr.ctl.mem_type),
         .addr(wreg.dataM.aluout[1:0]),
-        .rd(readdataW)
+        .rd(readdataW),
+        .original(regfile.original)
     );
     assign result = wreg.dataM.instr.ctl.memread ? 
                     readdataW : wreg.dataM.aluout;

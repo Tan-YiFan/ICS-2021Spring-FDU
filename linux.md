@@ -24,5 +24,8 @@
 - [x] TLBWI
 - [x] TLBWR
 - [x] WAIT: stall until exception, this exception must be interrupt
+- [x] PREF: skipped
+- [ ] LL
+- [ ] SC
 
 ## TLB

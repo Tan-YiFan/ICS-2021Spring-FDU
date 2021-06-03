@@ -27,16 +27,20 @@ package common;
     typedef enum logic[2:0] { T_BEQ, T_BNE, T_BGEZ, T_BLTZ, T_BGTZ, T_BLEZ } branch_t;
     typedef enum logic [2:0] {
         M_MULT, M_MULTU, M_DIV, M_DIVU,
-        M_MADD, M_MSUB
+        M_MADD, M_MSUB, M_MADDU, M_MSUBU
     } multicycle_t;
-    typedef enum logic [2:0] {
+    typedef enum logic [3:0] {
         MEM_LB, MEM_LBU, 
         MEM_LH, MEM_LHU,
         MEM_LW,
         MEM_SB,
         MEM_SH,
-        MEM_SW
+        MEM_SW,
+        MEM_SWL, MEM_SWR, MEM_LWL, MEM_LWR
     } mem_t;
+    typedef enum logic [3:0] {
+        TRAP_TEQ, TRAP_TGE, TRAP_TLT, TRAP_TNE, TRAP_TGEU, TRAP_TLTU
+    } trap_t;
     
     
     

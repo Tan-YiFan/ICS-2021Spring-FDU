@@ -9,7 +9,7 @@ module mmu
         output tu_op_resp_t tu_op_resp,
 
         input ibus_req_t ireq_virt,
-        output dbus_req_t dreq_virt,
+        input dbus_req_t dreq_virt,
         output ibus_req_t ireq,
         output dbus_req_t dreq,
         exception_intf.mmu exception

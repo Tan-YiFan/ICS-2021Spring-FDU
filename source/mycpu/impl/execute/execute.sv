@@ -75,16 +75,16 @@ module execute
     assign dataE.writedata = writedata;
     always_comb begin
         unique case(ereg.dataD.instr.ctl.multicycle_type)
-            M_MADD: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} + {hi, lo};
-            M_MSUB: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} - {hi, lo};
+            M_MADD, M_MADDU: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} + {hi, lo};
+            M_MSUB, M_MSUBU: {dataE.hi, dataE.lo} = {ereg.dataD.hi, ereg.dataD.lo} - {hi, lo};
             default: begin
                 {dataE.hi, dataE.lo} = {hi, lo};
             end
         endcase
     end
     
-    assign dataE.hi = hi;
-    assign dataE.lo = lo;
+    // assign dataE.hi = hi;
+    // assign dataE.lo = lo;
     assign dataE.pcplus4 = ereg.dataD.pcplus4;
     assign dataE.in_delay_slot = ereg.dataD.in_delay_slot;
     assign dataE.cp0_cause = ereg.dataD.cp0_cause;
@@ -92,6 +92,24 @@ module execute
     assign dataE.i_tlb_invalid = ereg.dataD.i_tlb_invalid;
     assign dataE.i_tlb_modified = ereg.dataD.i_tlb_modified;
     assign dataE.i_tlb_refill = ereg.dataD.i_tlb_refill;
+    logic tr;
+    assign dataE.exception_tr = tr;
+    always_comb begin
+        tr = '0;
+        if (ereg.dataD.instr.ctl.is_trap) begin
+            unique case(ereg.dataD.instr.ctl.trap_type)
+                TRAP_TEQ: tr = alusrca == alusrcb;
+                TRAP_TNE: tr = alusrca != alusrcb;
+                TRAP_TLT: tr = signed'(alusrca) < signed'(alusrcb);
+                TRAP_TLTU: tr = alusrca < alusrcb;
+                TRAP_TGE: tr = signed'(alusrca) > signed'(alusrcb);
+                TRAP_TGEU: tr = alusrca > alusrcb;
+                default: begin
+                    
+                end
+            endcase
+        end
+    end
     
     assign mreg.dataE_new = dataE;
 

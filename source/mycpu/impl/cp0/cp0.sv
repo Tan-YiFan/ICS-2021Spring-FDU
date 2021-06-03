@@ -26,9 +26,11 @@ module cp0
         end
         exception_t exception_info;
         assign exception_info = exception.exception_info;
+        logic timer_interrupt;
         always_comb begin
                 cp0_nxt = cp0;
                 cp0_nxt.count = cp0_nxt.count + {31'b0, count_switch};
+                cp0_nxt.cause.IP[7:2] = exception.interrupt_info[7:2];
                 if (self.write.valid) begin
                         unique case(self.write.id)
                                 5'd0: cp0_nxt.index[4:0] = self.write.data[4:0];
@@ -166,7 +168,7 @@ module cp0
         assign self.cp0_status = cp0.status;
         assign self.cp0_cause = cp0.cause;
 
-        logic timer_interrupt;
+        
         always_ff @(posedge clk) begin
                 if (~resetn) begin
                         timer_interrupt <= '0;
